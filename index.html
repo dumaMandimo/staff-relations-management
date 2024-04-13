@@ -1,1 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Relations Management</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="script.js" defer></script>
+
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Register</h1>
+        </div>
+    </header>
+    <main>
+        <p>Please fill out this form with the required information</p>
+<form method="post" action=>
+  <fieldset>
+    <label for="first-name">Enter Your First Name: <input id="first-name" type="text" required /></label>
+    <label for="last-name">Enter Your Last Name: <input id="last-name" type="text" required /></label>
+    <label for="email">Enter Your Email: <input id="email" type="email" required /></label>
+    <label for="new-password">Create a New Password: <input id="new-password" type="password" pattern="[a-z0-5]{8,}" required /></label>
+    <label for="dog-names">Please choose your role:</label> 
+    <select name="roles" id="roles"> 
+        <option value="Manager">Manager</option> 
+        <option value="Employee">Employee</option> 
+        <option value="HR">HR</option> 
+    </select>
+    <input type="submit" value="Submit" />
+    </main>
+    <footer>
+        <p>&copy; 2024 Staff Relations Management</p>
+    </footer>
+</body>
+</html>
