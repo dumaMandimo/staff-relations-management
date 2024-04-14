@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Staff Relations Management</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css" />
     <script src="script.js" defer></script>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header>
-        <div class="container">
-            <h1>Sign In</h1>
-        </div>
+      <div class="container">
+        <h1>Sign In</h1>
+      </div>
     </header>
     <main>
-        <p>Please fill out this form with the required information</p>
-<form method="post" action=>
-  <fieldset>
-    <label for="email">Input Email: <input id="email" type="email" required /></label>
-    <label for="password">Input Password: <input id="password" type="password" pattern="[a-z0-5]{8,}" required /></label>
-    <input type="submit" value="Submit" />
+      <p>Please fill out this form with the required information</p>
+      <form method="post" action="/users/login">
+        <fieldset>
+          <label for="email"
+            >Input Email: <input id="email" type="email" required
+          /></label>
+          <label for="password"
+            >Input Password:
+            <input
+              id="password"
+              type="password"
+              pattern="[a-z0-5]{8,}"
+              required
+          /></label>
+          <input type="submit" value="Submit" />
+        </fieldset>
+      </form>
     </main>
     <footer>
-        <p>&copy; 2024 Staff Relations Management</p>
+      <p>&copy; 2024 Staff Relations Management</p>
     </footer>
-</body>
-
+  </body>
 </html>
