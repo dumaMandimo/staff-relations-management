@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const indexRouter = require('./index.js');
 const { auth } = require('express-openid-connect');
+const path = require('path');
 require('dotenv').config();
 
 const config = {
@@ -13,8 +14,11 @@ const config = {
     issuerBaseURL: 'https://boogeraids.eu.auth0.com'
 };
 
+const staticPath = path.join(__dirname, "./public"); // defines path to public directory
+app.use(express.static(staticPath)); // idk how but this middleware makes it possible to render the files stored in the public directory
+app.set('view engine', 'html'); // sets ejs as the view engine to render ejs files in view directory when building the express application from app.js
+
 app.use(auth(config));
-app.set('view engine', 'ejs'); // sets ejs as the view engine to render ejs files in view directory when building the express application from app.js
 app.use('/', indexRouter); // configures (adds) base '/' endpoint from router.js to express app
 app.use((req, res, next) => {
     res.locals.isAuthenticated = req.oidc.isAuthenticated();
