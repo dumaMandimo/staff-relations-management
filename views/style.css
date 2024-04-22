@@ -1,6 +1,6 @@
 :root{
-    --color1: white;
-    --color2: #ffd67e;
+    --color1: rgb(182, 228, 255);
+    --color2: #000000;
 }
 
 body {
