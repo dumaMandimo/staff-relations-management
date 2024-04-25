@@ -14,7 +14,9 @@
     "express-openid-connect": "^2.17.1"
   },
   "devDependencies": {
-    "coveralls-next": "^4.2.1"
+    "coveralls-next": "^4.2.1",
+    "jest": "^27.4.6"
+    
   }
 }
 
