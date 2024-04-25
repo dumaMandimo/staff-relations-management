@@ -17,6 +17,9 @@
     "coveralls-next": "^4.2.1",
     "jest": "^27.4.6"
     
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   }
 }
 
