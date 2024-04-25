@@ -4,7 +4,8 @@
   "description": "staff relations management app",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "jest--coverage"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
@@ -16,3 +17,5 @@
     "coveralls-next": "^4.2.1"
   }
 }
+
+//running npm test command wiill run jest with code coverage
