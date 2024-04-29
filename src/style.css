@@ -1,8 +1,12 @@
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f7f7f7;
+    background-image: url('plant.jpg'); /* Replace 'background-image.jpg' with your image file */
+    background-size: cover;
+    background-position: center;
+    font-family: Arial, sans-serif; /* Change font if needed */
+    color: #fff; /* Text color */
+    height: 100%;
 }
 
 header {
@@ -41,11 +45,11 @@ input{
     display: block;
 }
 
-button{
+.signinbutton{
     position: relative;
     width: 50%;
     height: 45px;
-    background: white;
+    background: #000;
     margin-top: 180px;
     margin-left: 180px;
     border: 2px solid rgb(18, 21, 21);
@@ -53,15 +57,14 @@ button{
     border-radius:40px ;
     cursor: pointer;
     font-size: 16px;
-    color: #272626;
-    font-weight: 600;
-}
-header {
-    background-color: #333;
     color: #fff;
-    padding: 20px 0;
+    font-weight: 600;
+    justify-content: center;
+}
+h1{
     text-align: center;
 }
+
 footer {
     background-color: #333;
     color: #fff;
@@ -73,4 +76,18 @@ footer {
     width: 100%;
     height: 2%;
 }
-
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+#content{
+    max-width: 800px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #000;
+}
