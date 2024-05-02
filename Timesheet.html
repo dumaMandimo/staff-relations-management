@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="timesheet.css">
+    <title>Manager Timesheet</title>
+</head>
+
+<body>
+    <main class="table">
+
+        <section class="header">
+            <h1> <b>Employee Timesheet</b></h1>
+        </section>
+        <section class="body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Id</th>
+                        <th>Task</th>
+                        <th>Date</th>
+                        <th>Allocated Time</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="date"></td>
+                        <td><input type="time"></td>
+                        <td><input type="time"></td>
+                        <td><input type="time"></td>
+                        <td><input type="date"></td>
+                        <td>
+                            <input type="radio" id="status2" name="progress"/>
+                            <label for="status2">In Progress</label>
+                      
+                            <input type="radio" id="status3" name="progress"/>
+                            <label for="status3">Completed</label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button data-target="#addTaskModel">Add Task</button>
+            <button data-target="#addTaskModel">Edit Task</button>
+            <button data-target="#addTaskModel">Add Task</button>
+        </section>
+    </main>
+</body>
+</html>
