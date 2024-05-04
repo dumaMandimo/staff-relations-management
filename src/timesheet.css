@@ -85,3 +85,37 @@ input[type="time"]:focus {
     outline: none;
     border-color: #4caf50;
 }
+.task-list tr td {
+    border: none;
+}
+
+.task-list th {
+    background-color: #4caf50;
+    color: white;
+}
+
+.task-list td {
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+}
+
+.task-list .edit {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.task-list .edit:hover {
+    background-color: #ffca28;
+    border-color: #ffca28;
+}
+
+.task-list .delete {
+    background-color: #dc3545;
+    color: #fff;
+    border-color: #dc3545;
+}
+
+.task-list .delete:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
