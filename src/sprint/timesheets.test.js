@@ -20,7 +20,7 @@ describe('Employee Timesheet', () => {
     await page.type('#date', '2024-05-01');
     await page.type('#startTime', '09:00');
     await page.type('#endTime', '10:30');
-    await page.click('#status3'); // Assuming Completed is selected
+    await page.click('#status3');
     await page.click('#addTask');
 
     // Wait for the task to be added (you may need to adjust the selector)
