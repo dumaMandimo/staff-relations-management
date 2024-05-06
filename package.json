@@ -4,8 +4,7 @@
   "description": "staff relations management app",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    
+    "start": "node app.js"
   },
   "dependencies": {
     "auth0": "^4.3.1",
