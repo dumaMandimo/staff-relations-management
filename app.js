@@ -11,7 +11,9 @@ const { ManagementClient } = require('auth0');
 let Users;
 
 
+/** ******************************************************************************************************************* */
 /** AUTHENTICATION */
+
 const config = {
     authRequired: false,
     auth0Logout: true,
@@ -22,6 +24,8 @@ const config = {
 };
 
 
+
+/** ******************************************************************************************************************** */
 /** AUTHORIZATION */
 
 const management = new ManagementClient({
@@ -36,51 +40,12 @@ const getUserRoles = async (ID) => {
 const getUsers = async () => {
     return await management.users.getAll();
 }
-
-/*
-const getToken = async () => {
-    var options = {
-        method: 'POST',
-        url: process.env.TOKENURL,
-        headers: {'content-type': 'application/x-www-form-urlencoded'},
-        data: new URLSearchParams({
-          grant_type: 'client_credentials',
-          client_id: process.env.CLIENTID,
-          client_secret: process.env.CLIENTSECRET,
-          audience: process.env.AUDIENCE
-        })
-      };
-    return axios.request(options).then(function (response) {
-        return response.data;
-    }).catch(function (error) {
-        return error;
-    });
-};
-*/
-/*
-const getRoles = async () => {
-    const axios = require('axios');
-
-    let config = {
-    method: 'get',
-    maxBodyLength: Infinity,
-    url: 'https://login.auth0.com/api/v2/users/:id/roles',
-    headers: { 
-        'Accept': 'application/json'
-    }
-    };
-
-    axios.request(config)
-    .then((response) => {
-    console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-    console.log(error);
-    });
+const getUserPermissions = async () => {
+    return management.users.getPermissions({ id: ID });
 }
-*/
 
 
+/** *********************************************************************************************************************** */
 /** MIDDLEWARE */
 app.set('view engine', 'ejs');
 app.use(express.static(staticPath));
@@ -92,9 +57,10 @@ app.use((req, res, next) => {
 });
 
 
+/** ************************************************************************************************************************ */
 /** ROUTING */
 app.get('/', (req, res) => {
-    res.render('home');
+    res.render('./homepage/home.ejs');
 });
 
 app.get('/signin', function (req, res, next) {
@@ -141,10 +107,11 @@ app.get('/profile/token', (req, res) => {
 });
 
 
-// STAFF ROUTES
+/** ************************************************************************************************************************* */
+/** STAFF ROUTES */
 app.get('/admin', (req, res) => {
     if(req.oidc.isAuthenticated()){
-        res.render('Admin');
+        res.render('./admin/Admin.ejs');
     }
     else{
         res.redirect('/signin');
@@ -152,7 +119,7 @@ app.get('/admin', (req, res) => {
 });
 app.get('/manager', (req, res) => {
     if(req.oidc.isAuthenticated()){
-        res.render('Manager');
+        res.render('./manager/Manager.ejs');
     }
     else{
         res.redirect('/signin');
@@ -160,7 +127,7 @@ app.get('/manager', (req, res) => {
 });
 app.get('/employee', (req, res) => {
     if(req.oidc.isAuthenticated()){
-        res.render('Employee');
+        res.render('./employee/Employee.ejs');
     }
     else{
         res.redirect('/signin');
@@ -178,6 +145,7 @@ app.get('/profile', (req, res) => {
 });
 
 
+/** ************************************************************************************************************************* */
 // ADMIN ROUTES
 app.get('/admin/manageusers', (req, res) => {
     const id = req.oidc.user.sub;
@@ -193,6 +161,18 @@ app.get('/admin/manageusers', (req, res) => {
         }
     });
 }); // Retrieve all users of web application
+
+/** EMPLOYEE ROUTES */
+app.get('/employee/timesheet', (req, res) => {
+    getUserRoles(id).then((result) => {
+        if(result.data[0].id == 'rol_Ymj8mgv2HKBLuXor'){
+            res.send('./employee/eTimesheet.ejs')
+        }
+        else{
+            res.send('Access Denied.');
+        }
+    });
+});
 
 // P O R T
 const PORT = process.env.PORT || 3000;
