@@ -1,11 +1,11 @@
+const login = document.querySelector('#login');
+const logout = document.querySelector('#logout');
 
-
-function setupSignInButton() {
-  document.getElementById('signinButton').addEventListener('click', function () {
-    alert('You clicked Sign In');
-  });
-}
-
-// Export the setupSignInButton function for the test
-module.exports = { setupSignInButton };
+login.addEventListener('click',() => {
+    document.body.style.backgroundColor = 'black';
+    console.log('logging in ...');
+});
+logout.addEventListener('click', () => {
+    console.log('logging out ...');
+});
 
