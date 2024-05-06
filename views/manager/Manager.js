@@ -9,7 +9,7 @@ function toggleSidebar() {
 
 function showDashboard() {
     var center = document.getElementById('center');
-    center.innerHTML = '<h1>Welcome to Manager Dashboard</h1>';
+    center.innerHTML = '<h1>Welcome to Admin Dashboard</h1>';
 }
 
 function showTasks() {
