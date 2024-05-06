@@ -5,7 +5,7 @@ const axios = require("axios").default;
 const { auth } = require('express-openid-connect');
 const { type } = require('os');
 const path = require('path');
-const staticPath = path.join(__dirname, "sprint");
+const staticPath = path.join(__dirname, "views");
 require('dotenv').config();
 const { ManagementClient } = require('auth0');
 let Users;
