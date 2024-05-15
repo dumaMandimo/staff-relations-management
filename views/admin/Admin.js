@@ -1,3 +1,5 @@
+import { removeAccess, getUserRoles, getUserPermissions } from "../../app";
+
 function toggleSidebar() {
     var sidebar = document.getElementById('sidebar');
     if (sidebar.style.transform === 'translateX(0)') {
@@ -17,31 +19,67 @@ function showTasks() {
     center.innerHTML = '<h2>Tasks</h2><p>List of tasks will be displayed here.</p>';
 }
 
+function Xtract(JSONData){
+  let Name = [];
+  let Email = [];
+  let ID = [];
+  for(let i = 0; i < JSONData.length; i++){
+    for(let attribute in JSONData[i]){
+      if(attribute == "name"){
+        Name.push(JSONData[i][attribute]);
+      }
+      else if(attribute == "email"){
+        Email.push(JSONData[i][attribute]);
+      }
+      else if(attribute == "user_id"){
+        ID.push(JSONData[i][attribute]);
+      }
+    }
+  }
+  let Users = {
+    "userNames": Name,
+    "userEmails": Email,
+    "userIDs": ID
+  }
+  return Users;
+}
+
 function showEmployees() {
-    var center = document.getElementById('center');
-    center.innerHTML = `
-        <h2>Employee Overview</h2>
-        <table id="employeeTable">
-            <thead>
-                <tr>
-                    <th>Employee ID</th>
-                    <th>Name</th>
-                    <th>Department</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Table rows will be dynamically added here -->
-            </tbody>
-        </table>
-        <form id="addEmployeeForm">
-            <input type="text" id="employeeId" placeholder="Employee ID" required>
-            <input type="text" id="employeeName" placeholder="Name" required>
-            <input type="text" id="employeeDepartment" placeholder="Department" required>
-            <button type="submit">Add Employee</button>
-        </form>
-    `;
-    displayEmployees(); // Call a function to populate the table with existing employees
+  var center = document.getElementById('center');
+  center.innerHTML = `
+      <h2>Employee Overview</h2>
+      <table id="employeeTable">
+          <thead>
+              <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Table rows will be dynamically added here -->
+          </tbody>
+      </table>
+      <form id="addEmployeeForm">
+          <input type="text" id="employeeId" placeholder="Employee ID" required>
+          <input type="text" id="employeeName" placeholder="Name" required>
+          <input type="text" id="employeeDepartment" placeholder="Department" required>
+          <button type="submit">Add Employee</button>
+      </form>
+  `;
+  displayEmployees(); // Call a function to populate the table with existing employees
+}
+
+async function displayEmployees() {
+  var under_center = document.getElementById('under_center');
+  fetch('/admin/manageusers').then((response) => {
+    return response.json();
+  }).then((data) => {
+    return JSON.stringify(Xtract(data));
+  }).then((users) => {
+    under_center.innerHTML = users;
+  });
 }
 
 function showMessages() {
