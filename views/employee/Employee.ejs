@@ -3,63 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="manager.css">
+    <link rel="stylesheet" href="employee.css">
     <script src="https://kit.fontawesome.com/4f347c46d9.js" crossorigin="anonymous"></script>
-    <title>Employee Page</title>
+    <title>Employee Dashboard</title>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
             <div class="sidebar-header">
-                <button class="toggle-btn"><i class="fas fa-bars"></i></button>
+              <button class="toggle-btn"><i class="fas fa-bars"></i></button>
             </div>
             <nav>
-                <ul>
-                    <li><a href="dashboard.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
-                    <li><a href="#"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
-                    <li><a href="#"><i class="fas fa-comments"></i> <span>Messages</span></a></li>
-                    <li><a href="#"><i class="fas fa-question-circle"></i> <span>Help</span></a></li>
-                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
-                </ul>
+              <ul>
+                <li><a href="#" class="homepage"><i class="fas fa-home"></i> <span>Homepage</span></a></li>
+                <li><a href="#" class="timesheets"><i class="fas fa-clipboard"></i> <span>Timesheets</span></a></li>
+                <li><a href="#" class="mealbooking"><i class="fas fa-utensils"></i> <span>Meal Booking</span></a></li>
+                <li><a href="#" class="carwash"><i class="fas fa-car"></i> <span>Car Wash</span></a></li>
+                <li><a href="#" class="notifications"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+                <li><a href="#" class="messages"><i class="fas fa-comments"></i> <span>Messages</span></a></li>
+                <li><a href="#" class="help"><i class="fas fa-question-circle"></i> <span>Help</span></a></li>
+                <li><a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+              </ul>
             </nav>
-        </div>
+          </div>
 
         <div class="content">
-            <section class="box">
-                <h3>BOX 1</h3>
-                <p>This will be whatever we want in the first tile</p>
-                <a href="#" class="btn">Visit</a>
-            </section>
-
-            <section class="box">
-                <h3>BOX 2</h3>
-                <p>This will be whatever we want in the second tile</p>
-                <a href="#" class="btn">Visit</a>
-            </section>
-
-            <section class="box">
-                <h3>BOX 3</h3>
-                <p>This will be whatever we want in the third tile</p>
-                <a href="#" class="btn">Visit</a>
-            </section>
-
-            <section class="box">
-                <h3>BOX 4</h3>
-                <p>This will be whatever we want in the forth tile</p>
-                <a href="#" class="btn">Visit</a>
-            </section>
-
-            <section class="box">
-                <h3>BOX 5</h3>
-                <p>This will be whatever we want in the fifth tile</p>
-                <a href="#" class="btn">Visit</a>
-            </section>
-
-            <section class="box">
-                <h3>BOX 6</h3>
-                <p>This will be whatever we want in the 6th tile</p>
-                <a href="#" class="btn">Visit</a>
-            </section>
+            <div id="contentContainer"></div>
         </div>
     </div>
 
