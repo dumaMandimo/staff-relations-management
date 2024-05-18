@@ -1,40 +1,54 @@
+/* Reset default margin and padding */
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
+/* Body styles */
 body {
     font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
     padding: 20px;
 }
 
+/* Header styles */
 h1 {
+    text-align: center;
+    color: #333;
     margin-bottom: 20px;
 }
 
+/* Form group styles */
 .form-group {
     margin-bottom: 20px;
 }
 
+/* Label styles */
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: #333;
 }
 
+/* Input text styles */
 input[type="text"] {
     width: 100%;
     padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     box-sizing: border-box;
     margin-bottom: 10px;
 }
 
+/* Star rating styles */
 .rate {
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-end;
     padding: 0 10px;
-    font-size: 40px; /* Increased font size */
+    font-size: 40px;
     margin-bottom: 20px;
 }
 
@@ -57,12 +71,12 @@ input[type="text"] {
 }
 
 .rate > input:checked ~ label {
-    color: #ffc700;    
+    color: #ffc700;
 }
 
 .rate:not(:checked) > label:hover,
 .rate:not(:checked) > label:hover ~ label {
-    color: #deb217;  
+    color: #deb217;
 }
 
 .rate > input:checked + label:hover,
@@ -73,12 +87,18 @@ input[type="text"] {
     color: #c59b08;
 }
 
+/* Button styles */
 button {
     font-size: 16px;
     padding: 10px 20px;
     cursor: pointer;
-    background-color: #747f75;
+    background-color: #4caf50;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+button:hover {
+    background-color: #45a049;
 }
