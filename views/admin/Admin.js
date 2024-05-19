@@ -1,5 +1,3 @@
-import { removeAccess, getUserRoles, getUserPermissions } from "../../app";
-
 function toggleSidebar() {
     var sidebar = document.getElementById('sidebar');
     if (sidebar.style.transform === 'translateX(0)') {

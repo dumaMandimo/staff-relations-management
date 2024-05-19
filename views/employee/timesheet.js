@@ -17,6 +17,15 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const tasksRef = ref(database, 'tasks');
 
+// Function to get the current user's email
+async function getUserEmail() {
+    fetch('/userinfo').then((response) => {
+      return response.json();
+    }).then((data) => {
+      return console.log(data.email);
+    });
+}
+
 // Function to showAlert
 function showAlert(message, className) {
     const div = document.createElement("div");
@@ -37,8 +46,9 @@ function calculateDuration(startTime, endTime) {
     return `${hours}:${minutes.toString().padStart(2, "0")}`;
 }
 
+
 // Function to add a new task
-function addTask() {
+async function addTask() {
     const employeeName = document.querySelector("#employeeName").value;
     const task = document.querySelector("#task").value;
     const date = document.querySelector("#date").value;
