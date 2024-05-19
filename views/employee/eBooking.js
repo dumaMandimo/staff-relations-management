@@ -17,26 +17,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Form submission event listener
-document.getElementById('bookingForm').addEventListener('submit', submitHandler);
-
-function submitHandler(e) {
+// Inject dependencies into the functions
+function submitHandler(e, firebase) {
     e.preventDefault();
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const date = document.getElementById('date').value; // Assuming there's a date input in your form
 
-    checkBookingLimit(email, date, (canBook) => {
+    checkBookingLimit(email, date, firebase, (canBook) => {
         if (canBook) {
             // Store booking data in Firebase
-            const bookingsRef = ref(db, 'bookings');
-            push(bookingsRef, {
+            const bookingsRef = firebase.ref(firebase.db, 'bookings');
+            firebase.push(bookingsRef, {
                 name: name,
                 email: email,
                 date: date
             }).then(() => {
                 // Booking successful, refresh bookings table
-                fetchBookings();
+                fetchBookings(firebase);
                 document.getElementById('bookingForm').reset();
             }).catch((error) => {
                 // Handle errors
@@ -49,13 +47,13 @@ function submitHandler(e) {
     });
 }
 
-function checkBookingLimit(email, date, callback) {
-    const bookingsRef = ref(db, 'bookings');
+function checkBookingLimit(email, date, firebase, callback) {
+    const bookingsRef = firebase.ref(firebase.db, 'bookings');
     const currentWeekStart = getWeekStartDate(date);
     const currentWeekEnd = getWeekEndDate(date);
-    const q = query(bookingsRef, orderByChild('email'), equalTo(email));
-    
-    onValue(q, (snapshot) => {
+    const q = firebase.query(bookingsRef, firebase.orderByChild('email'), firebase.equalTo(email));
+
+    firebase.onValue(q, (snapshot) => {
         const bookings = snapshot.val();
         let count = 0;
 
@@ -88,10 +86,9 @@ function getWeekEndDate(dateStr) {
     return new Date(date.setDate(diff)).toISOString().split('T')[0];
 }
 
-// Function to fetch bookings from Firebase and display them in the table
-function fetchBookings() {
-    const bookingsRef = ref(db, 'bookings');
-    onValue(bookingsRef, (snapshot) => {
+function fetchBookings(firebase) {
+    const bookingsRef = firebase.ref(firebase.db, 'bookings');
+    firebase.onValue(bookingsRef, (snapshot) => {
         const bookings = snapshot.val();
         const tableBody = document.querySelector('#bookingsTable tbody');
         tableBody.innerHTML = ''; // Clear existing table rows
@@ -112,6 +109,9 @@ function fetchBookings() {
         }
     });
 }
+
+// Attach event listener and inject dependencies
+document.getElementById('bookingForm').addEventListener('submit', (e) => submitHandler(e, { ref, push, db, query, onValue, orderByChild, equalTo }));
 
 // Function to edit a booking
 window.editBooking = function (key) {
@@ -143,7 +143,7 @@ window.editBooking = function (key) {
 
                 // Delete the old booking and create a new one
                 const bookingsRef = ref(db, 'bookings');
-                checkBookingLimit(updatedEmail, updatedDate, (canBook) => {
+                checkBookingLimit(updatedEmail, updatedDate, { ref, push, db, query, onValue, orderByChild, equalTo }, (canBook) => {
                     if (canBook) {
                         remove(bookingRef).then(() => {
                             push(bookingsRef, {
@@ -153,12 +153,12 @@ window.editBooking = function (key) {
                                 // Add other updated booking details here
                             }).then(() => {
                                 // Booking updated successfully, refresh bookings table
-                                fetchBookings();
+                                fetchBookings({ ref, push, db, query, onValue, orderByChild, equalTo });
                                 form.reset();
 
                                 // Restore the original form submission event handler
                                 form.removeEventListener('submit', updateHandler);
-                                form.addEventListener('submit', submitHandler);
+                                form.addEventListener('submit', (e) => submitHandler(e, { ref, push, db, query, onValue, orderByChild, equalTo }));
                             }).catch((error) => {
                                 // Handle errors
                                 console.error('Error updating booking:', error);
@@ -185,7 +185,7 @@ window.deleteBooking = function (key) {
         remove(bookingRef)
             .then(() => {
                 // Booking deleted successfully, refresh bookings table
-                fetchBookings();
+                fetchBookings({ ref, push, db, query, onValue, orderByChild, equalTo });
             })
             .catch((error) => {
                 // Handle errors
@@ -196,4 +196,4 @@ window.deleteBooking = function (key) {
 }
 
 // Fetch bookings on page load
-fetchBookings();
+fetchBookings({ ref, push, db, query, onValue, orderByChild, equalTo });
