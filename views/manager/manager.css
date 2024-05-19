@@ -10,8 +10,8 @@ body {
     left: 0;
     width: 200px;
     height: 100%;
-    background-color: #4caf50;
-    color: #fff;
+    background-color: #8AB2D5;
+    color: #11212D;
     padding-top: 60px;
     transition: transform 0.3s ease;
   }
@@ -26,7 +26,7 @@ body {
   }
   
   .sidebar ul li a {
-    color: #fff;
+    color: #11212D;
     text-decoration: none;
   }
   
@@ -37,7 +37,7 @@ body {
     font-size: 24px;
     background: none;
     border: none;
-    color: #fff;
+    color: #11212D;
     cursor: pointer;
   }
   
