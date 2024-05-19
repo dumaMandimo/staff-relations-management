@@ -12,12 +12,13 @@
   
   /* Sidebar Styles */
   .sidebar {
+    font-family: sans-serif;
+    font-weight: 700;
     width: 250px;
-    background-color: #CCD0CF;
+    background-color: #8AB2D5;
     color: #11212D;
     padding: 20px;
     transition: width 0.3s ease;
-    border-radius: 10px;
     overflow: hidden;
     position: fixed; /* Add this line */
     left: 0; /* Add this line */
@@ -64,7 +65,7 @@
   }
   
   nav ul li a:hover {
-    background-color: #4A5C6A;
+    background-color: #003366;
     color: #CCD0CF;
   }
   
@@ -103,5 +104,6 @@ nav ul li a {
 
 
 .logout{
-    margin-top: 320px;
+    margin-top: 230px;
 }
+

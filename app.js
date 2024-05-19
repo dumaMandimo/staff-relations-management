@@ -1,18 +1,14 @@
 /** IMPORTS AND VARIABES */
 const express = require('express');
-const { auth } = require('express-openid-connect');
-const { ManagementClient } = require('auth0');
-const path = require('path');
-require('dotenv').config();
 const app = express();
+const axios = require("axios").default;
+const { auth } = require('express-openid-connect');
+const { type } = require('os');
+const path = require('path');
 const staticPath = path.join(__dirname, "views");
 require('dotenv').config();
-
-/** ******************************************************************************************************************* */
-/** USER INFORMATION */
-let email;
-let name;
-/** ******************************************************************************************************************* */
+const { ManagementClient } = require('auth0');
+let Users;
 
 
 /** ******************************************************************************************************************* */
@@ -44,13 +40,14 @@ const getUserRoles = async (ID) => {
 const getUsers = async () => {
     return await management.users.getAll();
 }
-const getUserPermissions = async (ID) => {
+const getUserPermissions = async () => {
     return management.users.getPermissions({ id: ID });
 }
-const removeAccess = async (ID) => {
+const removeAccess = async () => {
     management.users.delete({id: ID});
 }
 
+export { removeAccess, getUserRoles, getUserPermissions };
 
 /** *********************************************************************************************************************** */
 /** MIDDLEWARE */
@@ -62,7 +59,6 @@ app.use((req, res, next) => {
     res.locals.user = req.oidc.user;
     next();
 });
-
 
 
 /** ************************************************************************************************************************ */
@@ -97,13 +93,10 @@ app.get('/signin', function (req, res, next) {
 });
 
 
-
 /** ************************************************************************************************************************* */
 /** STAFF ROUTES */
 app.get('/admin', (req, res) => {
     if(req.oidc.isAuthenticated()){
-        email = req.oidc.user.email;
-        name = req.oidc.user.name;
         res.render('./admin/Admin.ejs');
     }
     else{
@@ -112,8 +105,6 @@ app.get('/admin', (req, res) => {
 });
 app.get('/manager', (req, res) => {
     if(req.oidc.isAuthenticated()){
-        email = req.oidc.user.email;
-        name = req.oidc.user.name;
         res.render('./manager/Manager.ejs');
     }
     else{
@@ -122,9 +113,7 @@ app.get('/manager', (req, res) => {
 });
 app.get('/employee', (req, res) => {
     if(req.oidc.isAuthenticated()){
-        email = req.oidc.user.email;
-        name = req.oidc.user.name;
-        res.render('./employee/dashboard.ejs');
+        res.render('./employee/Employee.ejs');
     }
     else{
         res.redirect('/signin');
@@ -142,9 +131,8 @@ app.get('/profile', (req, res) => {
 });
 
 
-
 /** ************************************************************************************************************************* */
-/** ADMIN ROUTES */
+// ADMIN ROUTES
 app.get('/admin/manageusers', (req, res) => {
     const id = req.oidc.user.sub;
     getUserRoles(id).then((result) => {
@@ -160,38 +148,13 @@ app.get('/admin/manageusers', (req, res) => {
     });
 });
 
-app.get('/admin/createmeals', (req, res) => {
-    const id = req.oidc.user.sub;
-    getUserRoles(id).then((result) => {
-        if(result.data[0].id == 'rol_cXmp5WZeCYfL0JWm'){
-            res.render('./admin/aCreateMeal.ejs');
-        }
-        else{
-            res.send('Access Denied.');
-        }
-    });
-});
-
-app.get('/admin/timesheet', (req, res) => {
-    id = req.oidc.user.sub;
-    getUserRoles(id).then((result) => {
-        if(result.data[0].id == 'rol_cXmp5WZeCYfL0JWm'){
-            res.render('./admin/eTimesheet.ejs');
-        }
-        else{
-            res.send('Access Denied.');
-        }
-    });
-});
 
 
-/** ************************************************************************************************************************ */
 /** EMPLOYEE ROUTES */
-app.get('/employee/eTimesheet', (req, res) => {
-    id = req.oidc.user.sub;
+app.get('/employee/timesheet', (req, res) => {
     getUserRoles(id).then((result) => {
         if(result.data[0].id == 'rol_Ymj8mgv2HKBLuXor'){
-            res.render('./employee/eTimesheet.ejs');
+            res.send('./employee/eTimesheet.ejs')
         }
         else{
             res.send('Access Denied.');
@@ -199,45 +162,7 @@ app.get('/employee/eTimesheet', (req, res) => {
     });
 });
 
-app.get('/employee/eBooking', (req, res) => {
-    id = req.oidc.user.sub;
-    getUserRoles(id).then((result) => {
-        if(result.data[0].id == 'rol_Ymj8mgv2HKBLuXor'){
-            res.render('./employee/eBooking.ejs')
-        }
-        else{
-            res.send('Access Denied.');
-        }
-    });
-});
-
-app.get('/employee/eBookMeal', (req, res) => {
-    id = req.oidc.user.sub;
-    getUserRoles(id).then((result) => {
-        if(result.data[0].id == 'rol_Ymj8mgv2HKBLuXor'){
-            res.render('./employee/eBookMeal.ejs')
-        }
-        else{
-            res.send('Access Denied.');
-        }
-    });
-});
-
-
-
-/** ************************************************************************************************************************ */
-/** API FOR USER INFORMATION */
-app.get('/userinfo', (req, res) => {
-    res.json({ 
-        "email": email,
-        "name": name,
-    });
-});
-
-
-
-/** ************************************************************************************************************************ */
-/** PORT */
+// P O R T
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

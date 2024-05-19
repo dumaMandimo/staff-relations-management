@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./employee.css">
+    <link rel="stylesheet" href="employee.css">
     <script src="https://kit.fontawesome.com/4f347c46d9.js" crossorigin="anonymous"></script>
     <title>Employee Dashboard</title>
 </head>
@@ -21,7 +21,7 @@
                 <li><a href="#" class="carwash"><i class="fas fa-car"></i> <span>Car Wash</span></a></li>
                 <li><a href="#" class="notifications"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
                 <li><a href="#" class="messages"><i class="fas fa-comments"></i> <span>Messages</span></a></li>
-                <li><a href="#" class="help"><i class="fas fa-question-circle"></i> <span>Help</span></a></li>
+                <li><a href="#" class="feedback"><i class="fa-solid fa-star"></i> <span>Feedback</span></a></li>
                 <li><a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
               </ul>
             </nav>
@@ -32,6 +32,20 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadHomepage();
+        });
+
+        function loadHomepage() {
+            fetch('homepage.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('contentContainer').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading homepage:', error));
+        }
+    </script>
     <script src="sidebar.js"></script>
 </body>
 </html>

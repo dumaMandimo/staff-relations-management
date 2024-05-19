@@ -1,4 +1,5 @@
 body {
+    background-color: #A1C3DC;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
@@ -6,7 +7,7 @@ body {
 
 h1,
 h2 {
-    color: #004080;
+    color: #11212D;
     text-align: center;
 }
 
@@ -15,8 +16,8 @@ h2 {
 }
 
 #mealsList div {
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 2px solid #8AB2D5;
+    border-radius: 8px;
     padding: 10px;
     margin-bottom: 10px;
 }
@@ -26,7 +27,7 @@ h2 {
 }
 
 button {
-    background-color: #004080;
+    background-color: #8AB2D5;
 
     color: white;
     border: none;
@@ -68,8 +69,8 @@ table {
 
 /* Table header styles */
 thead th {
-    background-color: #004080;
-    color: white;
+    background-color: #8AB2D5;
+    color: #11212D;
     padding: 10px;
     text-align: left;
 }
@@ -77,7 +78,7 @@ thead th {
 /* Table body styles */
 tbody td {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #8AB2D5;
 }
 
 /* Larger font size for table content */
