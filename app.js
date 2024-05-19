@@ -160,6 +160,29 @@ app.get('/admin/manageusers', (req, res) => {
     });
 });
 
+app.get('/admin/createmeals', (req, res) => {
+    const id = req.oidc.user.sub;
+    getUserRoles(id).then((result) => {
+        if(result.data[0].id == 'rol_cXmp5WZeCYfL0JWm'){
+            res.render('./admin/aCreateMeal.ejs');
+        }
+        else{
+            res.send('Access Denied.');
+        }
+    });
+});
+
+app.get('/admin/timesheet', (req, res) => {
+    id = req.oidc.user.sub;
+    getUserRoles(id).then((result) => {
+        if(result.data[0].id == 'rol_cXmp5WZeCYfL0JWm'){
+            res.render('./admin/eTimesheet.ejs');
+        }
+        else{
+            res.send('Access Denied.');
+        }
+    });
+});
 
 
 /** ************************************************************************************************************************ */
