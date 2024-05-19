@@ -17,15 +17,6 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const tasksRef = ref(database, 'tasks');
 
-// Function to get the current user's email
-async function getUserEmail() {
-    fetch('/userinfo').then((response) => {
-      return response.json();
-    }).then((data) => {
-      return console.log(data.email);
-    });
-}
-
 // Function to showAlert
 function showAlert(message, className) {
     const div = document.createElement("div");
@@ -46,10 +37,10 @@ function calculateDuration(startTime, endTime) {
     return `${hours}:${minutes.toString().padStart(2, "0")}`;
 }
 
-
 // Function to add a new task
 async function addTask() {
     const employeeName = document.querySelector("#employeeName").value;
+    const employeeEmail = document.querySelector("#employeeEmail").value;
     const task = document.querySelector("#task").value;
     const date = document.querySelector("#date").value;
     const startTime = document.querySelector("#startTime").value;
@@ -69,6 +60,7 @@ async function addTask() {
     // Save task to Firebase database
     push(tasksRef, {
         employeeName: employeeName,
+        employeeEmail: employeeEmail,
         task: task,
         date: date,
         duration: calculateDuration(startTime, endTime),
@@ -80,6 +72,7 @@ async function addTask() {
 
     // Clear input fields
     document.querySelector("#employeeName").value = "";
+    document.querySelector("#employeeEmail").value = "";
     document.querySelector("#task").value = "";
     document.querySelector("#date").value = "";
     document.querySelector("#startTime").value = "";
@@ -88,6 +81,12 @@ async function addTask() {
     completedRadio.checked = false;
 }
 
+// Event listener for adding a task
+document.querySelector("#addTask").addEventListener("click", () => {
+    addTask();
+});
+
+
 // Function to delete a task
 function deleteTask(taskId) {
     remove(ref(database, `tasks/${taskId}`));
@@ -95,45 +94,80 @@ function deleteTask(taskId) {
     showAlert("Task Deleted!", "danger");
 }
 
-// Function to load tasks from Firebase database
-function loadTasksFromFirebase() {
+// Function to load tasks from Firebase database based on user's email
+function loadTasksFromFirebase(email) {
+    const tableBody = document.querySelector("#task-list");
+    tableBody.innerHTML = ""; // Clear existing tasks
+
+    // Retrieve tasks from the database
     onValue(tasksRef, (snapshot) => {
         const tasks = snapshot.val();
         if (tasks) {
             Object.keys(tasks).forEach((taskId) => {
                 const task = tasks[taskId];
-                const newRow = document.createElement("tr");
-                newRow.innerHTML = `
-                    <td>${task.employeeName}</td>
-                    <td>${task.task}</td>
-                    <td>${task.date}</td>
-                    <td>${task.duration}</td>
-                    <td>${task.status}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm edit">Edit</button>
-                        <button class="btn btn-danger btn-sm delete" data-id="${taskId}">Delete</button>
-                    </td>
-                `;
-                document.querySelector("#task-list").appendChild(newRow);
+                // Check if the task's email matches the user's email
+                if (task.employeeEmail === email) { // Update to employeeEmail
+                    const newRow = document.createElement("tr");
+                    newRow.innerHTML = `
+                        <td>${task.employeeName}</td>
+                        <td>${task.employeeEmail}</td>
+                        <td>${task.task}</td>
+                        <td>${task.date}</td>
+                        <td>${task.duration}</td>
+                        <td>${task.status}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm edit" data-id="${taskId}">Edit</button>
+                            <button class="btn btn-danger btn-sm delete" data-id="${taskId}">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(newRow);
+                }
             });
+        } else {
+            showAlert("No tasks found!", "info");
         }
     });
 }
 
-// Event listener for delete buttons
+// Event listener for form submission
+document.querySelector("#retrieveTimesheetForm").addEventListener("submit", async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    const email = document.querySelector("#userEmail").value;
+    if (email) {
+        loadTasksFromFirebase(email);
+    } else {
+        showAlert("Please enter an email address.", "danger");
+    }
+});
+
+// Event listener for editing a task
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("edit")) {
+        const taskId = e.target.dataset.id;
+        // Fetch the task data from Firebase and populate the form fields for editing
+        tasksRef.child(taskId).once("value", (snapshot) => {
+            const task = snapshot.val();
+            document.querySelector("#employeeName").value = task.employeeName;
+            document.querySelector("#employeeEmail").value = task.employeeEmail;
+            document.querySelector("#task").value = task.task;
+            document.querySelector("#date").value = task.date;
+            // You may need to parse the duration to separate hours and minutes
+            // Set the radio button based on the task status
+            const inProgressRadio = document.querySelector("#status2");
+            const completedRadio = document.querySelector("#status3");
+            if (task.status === "In Progress") {
+                inProgressRadio.checked = true;
+            } else if (task.status === "Completed") {
+                completedRadio.checked = true;
+            }
+        });
+    }
+});
+
+// Event listener for deleting a task
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("delete")) {
         const taskId = e.target.dataset.id;
         deleteTask(taskId);
     }
-});
-
-// Load tasks from Firebase database when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-    loadTasksFromFirebase();
-});
-
-// Event listener for adding a task
-document.querySelector("#addTask").addEventListener("click", () => {
-    addTask();
 });

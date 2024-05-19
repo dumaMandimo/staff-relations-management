@@ -22,6 +22,7 @@
           <thead>
             <tr>
               <th>Name</th>
+              <th>Email</th>
               <th>Task</th>
               <th>Date</th>
               <th>Start Time</th>
@@ -33,6 +34,7 @@
           <tbody>
             <tr>
               <td><input type="text" id="employeeName" /></td>
+              <td><input type="email" id="employeeEmail" /></td>
               <td><input type="text" id="task" /></td>
               <td><input type="date" id="date" /></td>
               <td><input type="time" id="startTime" /></td>
@@ -53,10 +55,34 @@
           </tbody>
         </table>
         <div class="col-10 mt-5">
-          <table class="table table-striped table-light">
+          <form id="retrieveTimesheetForm">
+            <div class="mb-3">
+              <label for="userName" class="form-label">Name:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="userName"
+                name="userName"
+              />
+              <label for="userEmail" class="form-label">Email:</label>
+              <input
+                type="email"
+                class="form-control"
+                id="userEmail"
+                name="userEmail"
+              />
+              <!-- Update type to email -->
+            </div>
+            <button id="submitDetails" type="submit" class="btn btn-primary">
+              Retrieve Timesheet
+            </button>
+          </form>
+
+          <table class="table table-striped table-light mt-4">
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Email</th>
                 <th>Task</th>
                 <th>Date</th>
                 <th>Task Duration</th>
@@ -65,7 +91,7 @@
               </tr>
             </thead>
             <tbody id="task-list">
-              <!-- Tasks table -->
+              <!-- Timesheet data will be displayed here -->
             </tbody>
           </table>
         </div>
