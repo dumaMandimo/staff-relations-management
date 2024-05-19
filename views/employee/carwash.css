@@ -10,21 +10,20 @@ h1{
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #A1C3DC;
 }
 
 .container {
-    max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #A1C3DC;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
     margin-bottom: 20px;
-    color: #11789B;
+    color: #11212D;
 }
 
 form {
@@ -47,7 +46,7 @@ input[type="email"] {
 }
 
 button {
-    background-color: #11789B;
+    background-color: #8AB2D5;
     color: #fff;
     padding: 10px 20px;
     border: none;
@@ -56,7 +55,7 @@ button {
 }
 
 button:hover {
-    background-color: #0a5d7c;
+    background-color: #003366;
 }
 
 table {

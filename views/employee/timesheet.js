@@ -38,7 +38,7 @@ function calculateDuration(startTime, endTime) {
 }
 
 // Function to add a new task
-async function addTask() {
+function addTask() {
     const employeeName = document.querySelector("#employeeName").value;
     const employeeEmail = document.querySelector("#employeeEmail").value;
     const task = document.querySelector("#task").value;
