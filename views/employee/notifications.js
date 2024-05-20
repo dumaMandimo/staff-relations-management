@@ -17,58 +17,69 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Get references to the notification lists
-const newNotificationsRef = ref(db, 'notifications/new');
-const archivedNotificationsRef = ref(db, 'notifications/archived');
 
-// Get reference to the new notifications list
-onValue(newNotificationsRef, (snapshot) => {
-  const notifications = snapshot.val();
-  const newNotificationsList = document.getElementById('newNotifications');
-  newNotificationsList.innerHTML = '';
-
-  if (notifications) {
-    Object.keys(notifications).forEach((key) => {
-      const notification = notifications[key];
-      const listItem = document.createElement('li');
-      listItem.classList.add('unread');
-      listItem.textContent = notification.message;
-
-      const archiveButton = document.createElement('button');
-      archiveButton.textContent = 'Archive';
-      archiveButton.addEventListener('click', () => {
-        archiveNotification(key, notification);
-      });
-
-      listItem.appendChild(archiveButton);
-      newNotificationsList.appendChild(listItem);
+function checkMealBooking(name) {
+    console.log("Checking meal bookings for:", name);
+    const bookingsRef = ref(db, 'mealsBooking');
+    onValue(bookingsRef, (snapshot) => {
+        const bookings = snapshot.val();
+        if (bookings) {
+            const userBookings = Object.values(bookings).filter(booking => booking.employee === name);
+            if (userBookings.length > 0) {
+                // User has meal bookings
+                let message = `Reminder: You have meal bookings for the following dates: `;
+                userBookings.forEach(booking => {
+                    message += `${booking.date} (${booking.mealType}), `;
+                });
+                message = message.slice(0, -2); // Remove the last comma and space
+                displayNotification(message);
+            } else {
+                // User does not have any meal bookings
+                displayNotification(`Reminder: Please book your meals.`);
+            }
+        } else {
+            // No bookings found
+            displayNotification(`Reminder: No bookings found. Please book your meals.`);
+        }
     });
-  }
-});
-
-// Get reference to the archived notifications list
-onValue(archivedNotificationsRef, (snapshot) => {
-  const notifications = snapshot.val();
-  const archivedNotificationsList = document.getElementById('archivedNotifications');
-  archivedNotificationsList.innerHTML = '';
-
-  if (notifications) {
-    Object.keys(notifications).forEach((key) => {
-      const notification = notifications[key];
-      const listItem = document.createElement('li');
-      listItem.textContent = notification.message;
-      archivedNotificationsList.appendChild(listItem);
-    });
-  }
-});
-
-// Function to archive a notification
-function archiveNotification(key, notification) {
-  // Remove the notification from the new list
-  const newNotificationsRef = ref(db, `notifications/new/${key}`);
-  remove(newNotificationsRef);
-
-  // Add the notification to the archived list
-  const archivedNotificationsRef = ref(db, `notifications/archived`);
-  push(archivedNotificationsRef, notification);
 }
+
+
+
+
+// Function to check if the user has booked a car wash
+function checkCarWashBooking(name) {
+    const bookingsRef = ref(db, 'bookings');
+    onValue(bookingsRef, (snapshot) => {
+        const bookings = snapshot.val();
+        if (bookings) {
+            const userBookings = Object.values(bookings).filter(booking => booking.name === name);
+            if (userBookings.length > 0) {
+                // User has a car wash booking
+                displayNotification(`Reminder: You have a car wash booking for this week.`);
+            } else {
+                // User does not have a car wash booking
+                displayNotification(`Reminder: Please book your car wash for the week.`);
+            }
+        } else {
+            // No bookings found
+            displayNotification(`Reminder: No bookings found. Book a carwash.`);
+        }
+    });
+}
+
+// Function to display notifications
+function displayNotification(message) {
+    const notificationsSection = document.getElementById('notificationsSection');
+    const notificationDiv = document.getElementById('notification');
+    notificationDiv.textContent = message;
+    notificationsSection.style.display = 'block'; // Show the notifications section
+}
+
+// Function to handle form submission
+document.getElementById('employeeForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const employeeName = document.getElementById('employeeName').value;
+    checkMealBooking(employeeName);
+    checkCarWashBooking(employeeName);
+});

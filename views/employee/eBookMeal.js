@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, remove, set, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Firebase configuration
@@ -80,7 +80,7 @@ window.bookMeal = function (mealKey) {
                         dateBooked.textContent = `Meal booked on ${bookingDate} by ${employeeName}.`;
                         cancelMealBtn.style.display = 'block';
                         cancelMealBtn.setAttribute('data-booking-ref', newBookingRef.key);
-                        fetchBookings(); // Refresh bookings table
+                        fetchMealBookings(); // Refresh bookings table
                     }).catch((error) => {
                         console.error('Error booking meal:', error);
                         alert('An error occurred while booking the meal. Please try again later.');
@@ -104,7 +104,7 @@ cancelMealBtn.addEventListener('click', () => {
         remove(bookingRef).then(() => {
             dateBooked.textContent = 'No meal booked yet.';
             cancelMealBtn.style.display = 'none';
-            fetchBookings(); // Refresh bookings table
+            fetchMealBookings(); // Refresh bookings table
         }).catch((error) => {
             console.error('Error cancelling meal:', error);
             alert('An error occurred while cancelling the meal. Please try again later.');
@@ -113,7 +113,7 @@ cancelMealBtn.addEventListener('click', () => {
 });
 
 // Function to fetch existing bookings
-function fetchBookings() {
+function fetchMealBookings() {
     onValue(bookingsRef, (snapshot) => {
         const bookings = snapshot.val();
         if (bookings) {
@@ -141,7 +141,7 @@ function fetchBookings() {
 window.deleteBooking = function (bookingKey) {
     const bookingRef = ref(db, `mealsBooking/${bookingKey}`);
     remove(bookingRef).then(() => {
-        fetchBookings(); // Refresh bookings table
+        fetchMealBookings(); // Refresh bookings table
     }).catch((error) => {
         console.error('Error deleting booking:', error);
         alert('An error occurred while deleting the booking. Please try again later.');
@@ -149,4 +149,4 @@ window.deleteBooking = function (bookingKey) {
 };
 
 // Fetch existing bookings on page load
-fetchBookings();
+fetchMealBookings();

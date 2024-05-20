@@ -93,3 +93,58 @@ td,
 th {
   padding: 12px;
 }
+
+/* Update the CSS to style the notification box */
+#notification {
+  background-color: #e5e5ea;
+  border-radius: 15px;
+  padding: 10px 15px;
+  margin: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#notificationsSection {
+  text-align: center;
+}
+
+
+#formSection {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  
+  max-width: 600px;
+  /* Set a maximum width for larger screens */
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style form inputs */
+#employeeName {
+  width: calc(100% - 20px);
+ 
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Center the submit button */
+#submitBtn {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 20px;
+  background-color: #004080;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#submitBtn:hover {
+  background-color: #003366;
+}
