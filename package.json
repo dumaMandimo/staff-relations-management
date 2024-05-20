@@ -1,9 +1,7 @@
 {
   "name": "staff-relations-management",
   "version": "1.0.0",
-  "description": "staff relations management app",
   "main": "app.js",
-  "type": "module",
   "scripts": {
     "start": "node app.js"
   },
