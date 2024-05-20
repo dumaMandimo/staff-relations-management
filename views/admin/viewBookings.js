@@ -1,5 +1,6 @@
+// Firebase configuration
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCvnZkbqON0vsIackr90txDbg-oYj_ikJ0",
@@ -15,6 +16,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
 // Fetch and display car wash bookings
 
 function fetchCarWashBookings() {
@@ -59,5 +61,8 @@ function fetchMealBookings() {
 }
 
 // Fetch bookings on page load
-fetchCarWashBookings();
-fetchMealBookings();
+document.addEventListener('DOMContentLoaded', () => {
+    fetchCarWashBookings();
+    fetchMealBookings();
+});
+
