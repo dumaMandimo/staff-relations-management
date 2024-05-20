@@ -164,6 +164,45 @@ document.addEventListener("click", (e) => {
     }
 });
 
+// Event listener for downloading timesheet in PDF format
+document.querySelector("#downloadPDF").addEventListener("click", () => {
+    downloadTimesheet("pdf");
+});
+
+// Event listener for downloading timesheet in CSV format
+document.querySelector("#downloadCSV").addEventListener("click", () => {
+    downloadTimesheet("csv");
+});
+
+// Function to download timesheet in the specified format
+function downloadTimesheet(format) {
+    const table = document.querySelector("#task-list");
+    const rows = table.querySelectorAll("tr");
+
+    if (format === "csv") {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        rows.forEach(row => {
+            const rowData = [];
+            row.querySelectorAll("td").forEach((cell, index) => {
+                // Skip the last two columns (containing the delete and edit buttons)
+                if (index !== row.cells.length - 2 && index !== row.cells.length - 1) {
+                    rowData.push(cell.textContent);
+                }
+            });
+            csvContent += rowData.join(",") + "\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "timesheet.csv");
+        document.body.appendChild(link);
+        link.click();
+    }
+}
+
+
+
 // Event listener for deleting a task
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("delete")) {
