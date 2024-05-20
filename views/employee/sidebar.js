@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Load the content based on the clicked link
       const contentContainer = document.getElementById('contentContainer');
       if (link.textContent.trim() === 'Homepage') {
-        fetch('homepage.html')
+        fetch('homepage.ejs')
           .then(response => response.text())
           .then(html => {
             contentContainer.innerHTML = html;
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
           })
           .catch(error => console.error('Error loading content:', error));
       } else if (link.textContent.trim() === 'Timesheets') {
-        fetch('eTimesheet.html')
+        fetch('eTimesheet.ejs')
           .then(response => response.text())
           .then(html => {
             contentContainer.innerHTML = html;
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
           })
           .catch(error => console.error('Error loading content:', error));
       } else if (link.textContent.trim() === 'Meal Booking') {
-        fetch('eBookMeal.html')
+        fetch('eBookMeal.ejs')
           .then(response => response.text())
           .then(html => {
             contentContainer.innerHTML = html;
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
           })
           .catch(error => console.error('Error loading content:', error));
       } else if (link.textContent.trim() === 'Car Wash') {
-        fetch('eBooking.html')
+        fetch('eBooking.ejs')
           .then(response => response.text())
           .then(html => {
             contentContainer.innerHTML = html;
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
           })
           .catch(error => console.error('Error loading content:', error));
         } else if (link.textContent.trim() === 'Feedback') {
-          fetch('eFeedback.html')
+          fetch('eFeedback.ejs')
             .then(response => response.text())
             .then(html => {
               contentContainer.innerHTML = html;
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error loading content:', error));
         }  else if (link.textContent.trim() === 'Notifications') {
-          fetch('Notifications.html')
+          fetch('Notifications.ejs')
             .then(response => response.text())
             .then(html => {
               contentContainer.innerHTML = html;
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error loading content:', error));
         } else if (link.textContent.trim() === 'Messages') {
-          fetch('messages.html')
+          fetch('messages.ejs')
             .then(response => response.text())
             .then(html => {
               contentContainer.innerHTML = html;

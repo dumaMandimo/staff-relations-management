@@ -1,14 +1,19 @@
 /** IMPORTS AND VARIABES */
 const express = require('express');
-const app = express();
-const axios = require("axios").default;
 const { auth } = require('express-openid-connect');
-const { type } = require('os');
+const { ManagementClient, ResponseError } = require('auth0');
 const path = require('path');
+require('dotenv').config();
+const app = express();
 const staticPath = path.join(__dirname, "views");
 require('dotenv').config();
-const { ManagementClient } = require('auth0');
-let Users;
+
+/** ******************************************************************************************************************* */
+/** USER INFORMATION */
+let id;
+let email;
+let name;
+/** ******************************************************************************************************************* */
 
 
 /** ******************************************************************************************************************* */
@@ -31,23 +36,31 @@ const config = {
 const management = new ManagementClient({
     domain: process.env.DOMAIN,
     clientId: process.env.CLIENTID,
-    clientSecret: process.env.CLIENTSECRET,
+    clientSecret: process.env.CLIENTSECRET
 });
 
 const getUserRoles = async (ID) => {
-    return await management.users.getRoles({ id:  ID});
+    return await management.users.getRoles({ id:  ID });
+}
+const getUserPermissions = async (ID) => {
+    return await management.users.getPermissions({ id: ID });
+}
+const getRoles = async (array) => {
+    for(let i = 0; i < array.length; ++i){
+        id = array[i].id;
+        let roles = await getUserRoles(id);
+        let permissions = await getUserPermissions(id);
+        array[i].roles = roles.data;
+        array[i].permissions = permissions.data
+    }
+    return array;
 }
 const getUsers = async () => {
     return await management.users.getAll();
 }
-const getUserPermissions = async () => {
-    return management.users.getPermissions({ id: ID });
-}
-const removeAccess = async () => {
-    management.users.delete({id: ID});
-}
 
-export { removeAccess, getUserRoles, getUserPermissions };
+
+
 
 /** *********************************************************************************************************************** */
 /** MIDDLEWARE */
@@ -59,6 +72,8 @@ app.use((req, res, next) => {
     res.locals.user = req.oidc.user;
     next();
 });
+
+
 
 
 /** ************************************************************************************************************************ */
@@ -93,10 +108,14 @@ app.get('/signin', function (req, res, next) {
 });
 
 
+
+
 /** ************************************************************************************************************************* */
 /** STAFF ROUTES */
 app.get('/admin', (req, res) => {
     if(req.oidc.isAuthenticated()){
+        email = req.oidc.user.email;
+        name = req.oidc.user.name;
         res.render('./admin/Admin.ejs');
     }
     else{
@@ -105,6 +124,8 @@ app.get('/admin', (req, res) => {
 });
 app.get('/manager', (req, res) => {
     if(req.oidc.isAuthenticated()){
+        email = req.oidc.user.email;
+        name = req.oidc.user.name;
         res.render('./manager/Manager.ejs');
     }
     else{
@@ -113,6 +134,8 @@ app.get('/manager', (req, res) => {
 });
 app.get('/employee', (req, res) => {
     if(req.oidc.isAuthenticated()){
+        email = req.oidc.user.email;
+        name = req.oidc.user.name;
         res.render('./employee/Employee.ejs');
     }
     else{
@@ -131,16 +154,40 @@ app.get('/profile', (req, res) => {
 });
 
 
+
+
 /** ************************************************************************************************************************* */
-// ADMIN ROUTES
-app.get('/admin/manageusers', (req, res) => {
+/** ADMIN ROUTES */
+
+app.get('/admin/createmeals', (req, res) => {
     const id = req.oidc.user.sub;
     getUserRoles(id).then((result) => {
         if(result.data[0].id == 'rol_cXmp5WZeCYfL0JWm'){
-            getUsers().then((usersData) => {
-                Users = usersData;
-                res.json(usersData.data);
-            });
+            res.render('./admin/aCreateMeal.ejs');
+        }
+        else{
+            res.send('Access Denied.');
+        }
+    });
+});
+
+app.get('/admin/timesheet', (req, res) => {
+    id = req.oidc.user.sub;
+    getUserRoles(id).then((result) => {
+        if(result.data[0].id == 'rol_cXmp5WZeCYfL0JWm'){
+            res.render('./admin/aTimesheet.ejs');
+        }
+        else{
+            res.send('Access Denied.');
+        }
+    });
+});
+
+app.get('/admin/employees', (req, res) => {
+    id = req.oidc.user.sub;
+    getUserRoles(id).then((result) => {
+        if(result.data[0].id == 'rol_cXmp5WZeCYfL0JWm'){
+            res.render('./admin/eSection.ejs');
         }
         else{
             res.send('Access Denied.');
@@ -150,11 +197,14 @@ app.get('/admin/manageusers', (req, res) => {
 
 
 
+
+/** ************************************************************************************************************************ */
 /** EMPLOYEE ROUTES */
-app.get('/employee/timesheet', (req, res) => {
+app.get('/employee/eTimesheet', (req, res) => {
+    id = req.oidc.user.sub;
     getUserRoles(id).then((result) => {
         if(result.data[0].id == 'rol_Ymj8mgv2HKBLuXor'){
-            res.send('./employee/eTimesheet.ejs')
+            res.render('./employee/eTimesheet.ejs');
         }
         else{
             res.send('Access Denied.');
@@ -162,7 +212,66 @@ app.get('/employee/timesheet', (req, res) => {
     });
 });
 
-// P O R T
+app.get('/employee/eBooking', (req, res) => {
+    id = req.oidc.user.sub;
+    getUserRoles(id).then((result) => {
+        if(result.data[0].id == 'rol_Ymj8mgv2HKBLuXor'){
+            res.render('./employee/eBooking.ejs')
+        }
+        else{
+            res.send('Access Denied.');
+        }
+    });
+});
+
+app.get('/employee/eBookMeal', (req, res) => {
+    id = req.oidc.user.sub;
+    getUserRoles(id).then((result) => {
+        if(result.data[0].id == 'rol_Ymj8mgv2HKBLuXor'){
+            res.render('./employee/eBookMeal.ejs')
+        }
+        else{
+            res.send('Access Denied.');
+        }
+    });
+});
+
+
+
+
+/** ************************************************************************************************************************ */
+/** API FOR USER INFORMATION */
+app.get('/userinfo', (req, res) => {
+    res.json({ 
+        "email": email,
+        "name": name,
+    });
+});
+
+app.get('/users', (req, res) => {
+    let userIdArr = [];
+    getUsers().then((response) => {
+        data = response.data;
+        for(let i = 0; i < data.length; ++i){
+            userIdArr.push({
+                "name": data[i].name,
+                "email": data[i].email,
+                "id": data[i].user_id,
+            });
+        }
+        return userIdArr;
+    }).then((users) => {
+        getRoles(users).then((response) => {
+            res.json(response);
+        });
+    });
+});
+
+
+
+
+/** ************************************************************************************************************************ */
+/** PORT */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
