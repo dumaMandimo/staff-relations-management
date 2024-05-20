@@ -17,62 +17,64 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-
 function checkMealBooking(name) {
     console.log("Checking meal bookings for:", name);
     const bookingsRef = ref(db, 'mealsBooking');
     onValue(bookingsRef, (snapshot) => {
         const bookings = snapshot.val();
+        let message;
         if (bookings) {
             const userBookings = Object.values(bookings).filter(booking => booking.employee === name);
             if (userBookings.length > 0) {
                 // User has meal bookings
-                let message = `Reminder: You have meal bookings for the following dates: `;
+                message = `You have meal bookings for the following dates: `;
                 userBookings.forEach(booking => {
                     message += `${booking.date} (${booking.mealType}), `;
                 });
                 message = message.slice(0, -2); // Remove the last comma and space
-                displayNotification(message);
             } else {
                 // User does not have any meal bookings
-                displayNotification(`Reminder: Please book your meals.`);
+                message = `Please book your meals.`;
             }
         } else {
             // No bookings found
-            displayNotification(`Reminder: No bookings found. Please book your meals.`);
+            message = `No bookings found. Please book your meals.`;
         }
+        displayNotification(message);
     });
 }
 
-
-
-
 // Function to check if the user has booked a car wash
 function checkCarWashBooking(name) {
+    console.log("Checking car wash bookings for:", name);
     const bookingsRef = ref(db, 'bookings');
     onValue(bookingsRef, (snapshot) => {
         const bookings = snapshot.val();
+        let message;
         if (bookings) {
             const userBookings = Object.values(bookings).filter(booking => booking.name === name);
             if (userBookings.length > 0) {
                 // User has a car wash booking
-                displayNotification(`Reminder: You have a car wash booking for this week.`);
+                message = `You have a car wash booking for this week.`;
             } else {
                 // User does not have a car wash booking
-                displayNotification(`Reminder: Please book your car wash for the week.`);
+                message = `Please book your car wash for the week.`;
             }
         } else {
             // No bookings found
-            displayNotification(`Reminder: No bookings found. Book a carwash.`);
+            message = `No bookings found. Book a carwash.`;
         }
+        displayNotification(message);
     });
 }
 
 // Function to display notifications
 function displayNotification(message) {
     const notificationsSection = document.getElementById('notificationsSection');
-    const notificationDiv = document.getElementById('notification');
+    const notificationDiv = document.createElement('div');
+    notificationDiv.className = 'notification';
     notificationDiv.textContent = message;
+    notificationsSection.appendChild(notificationDiv);
     notificationsSection.style.display = 'block'; // Show the notifications section
 }
 
@@ -80,6 +82,7 @@ function displayNotification(message) {
 document.getElementById('employeeForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const employeeName = document.getElementById('employeeName').value;
+    document.getElementById('notificationsSection').innerHTML = ''; // Clear previous notifications
     checkMealBooking(employeeName);
     checkCarWashBooking(employeeName);
 });
