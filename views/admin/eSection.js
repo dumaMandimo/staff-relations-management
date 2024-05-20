@@ -56,6 +56,7 @@ function clearForm() {
   permissionsSelect.selectedIndex = -1;
 }
 
+
 // Function to render the employee list
 function renderEmployees() {
   // Replace with your implementation to fetch employees from the data source
