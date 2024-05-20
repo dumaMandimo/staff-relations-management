@@ -57,31 +57,32 @@ function clearForm() {
 }
 
 // Function to render the employee list
-function renderEmployees() {
-  // Replace with your implementation to fetch employees from the data source
-  const employees = [
-    { id: 1, name: 'Nicki Minaj', email: 'pink@example.com', role: 'Admin', permissions: ['View Reports', 'Manage Employees', 'Manage Inventory'] },
-    { id: 2, name: 'Lana Del Rey', email: 'black@example.com', role: 'Manager', permissions: ['View Reports', 'Manage Inventory'] },
-    { id: 3, name: 'Donald Trump', email: 'red@example.com', role: 'Employee', permissions: ['View Reports'] }
-  ];
+async function renderEmployees() {
 
   const tbody = employeeTable.querySelector('tbody');
   tbody.innerHTML = '';
-
-  employees.forEach(employee => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-    <td>${employee.name}</td>
-    <td>${employee.surname}</td>
-    <td>${employee.email}</td>
-    <td>${employee.role}</td>
-    <td>${employee.permissions.join(', ')}</td>
-    <td>
-      <button onclick="editEmployee(${employee.id})">Edit</button>
-      <button class="delete" onclick="deleteEmployee(${employee.id})">Delete</button>
-    </td>
-  `;
-    tbody.appendChild(row);
+  console.log("pre");
+  await fetch("http://localhost:3000/users").then((response) => {
+    return response.json()
+  }).then((json) => {
+    let employees = json;
+    console.log(employees);
+      surname = 'blank';
+      employees.forEach(employee => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${employee.name}</td>
+        <td>${surname}</td>
+        <td>${employee.email}</td>
+        <td>${employee.roles[0].name}</td>
+        <td>${employee.permissions}</td>
+        <td>
+          <button onclick="editEmployee(${employee.id})">Edit</button>
+          <button class="delete" onclick="deleteEmployee(${employee.id})">Delete</button>
+        </td>
+      `;
+        tbody.appendChild(row);
+      });
   });
 }
 
