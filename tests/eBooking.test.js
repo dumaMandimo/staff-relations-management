@@ -1,65 +1,95 @@
-// Import the functions you want to test
-const { setupFormSubmission, fetchBookings, checkBookingLimit } = require('../dist/eBookingT');
+// Import the functions to test
+const {
+  setupFormSubmission,
+  submitHandler,
+  checkBookingLimit,
+  fetchBookings
+} = require('../dist/eBookingT'); // Replace 'your-file-name' with the actual file name
 
-describe('fetchBookings', () => {
-  it('should fetch bookings', () => {
-    // Mock necessary DOM elements
-    const mockDocument = {
-      querySelector: jest.fn(() => ({ innerHTML: '' }))
-    };
-
-    // Call the function to be tested
-    fetchBookings(mockDocument);
-
-    // Assertions
-    expect(mockDocument.querySelector).toHaveBeenCalledWith('#bookingsTable tbody');
-  });
+// Mock document and Firebase dependencies
+const mockAddEventListener = jest.fn();
+document.getElementById = jest.fn().mockReturnValue({
+  addEventListener: mockAddEventListener,
+  reset: jest.fn()
+});
+document.querySelector = jest.fn().mockReturnValue({
+  innerHTML: '',
+  insertRow: jest.fn(() => ({
+    innerHTML: ''
+  }))
 });
 
-describe('setupFormSubmission', () => {
-  it('should set up form submission event listener', () => {
-    // Mock necessary DOM elements
-    const mockSubmitHandler = jest.fn();
-    const mockFormElement = {
-      addEventListener: jest.fn()
-    };
-    const mockDocument = {
-      getElementById: jest.fn(() => mockFormElement)
-    };
-
-    // Call the function to be tested
-    setupFormSubmission(mockSubmitHandler, mockDocument);
-
-    // Assertions
-    expect(mockDocument.getElementById).toHaveBeenCalledWith('bookingForm');
-    expect(mockFormElement.addEventListener).toHaveBeenCalledWith('submit', expect.any(Function));
+const mockPush = jest.fn(() => Promise.resolve());
+const mockRemove = jest.fn(() => Promise.resolve());
+const mockOnValue = jest.fn((query, callback) => {
+  callback({
+    val: () => ({ testKey: { date: '2024-05-21' } })
   });
 });
+const mockRef = jest.fn(() => ({
+  orderByChild: jest.fn().mockReturnThis(),
+  equalTo: jest.fn().mockReturnThis(),
+  onValue: mockOnValue,
+  push: mockPush,
+  remove: mockRemove
+}));
 
-describe('checkBookingLimit', () => {
-  it('should allow booking if user has booked less than twice in the current week', () => {
-    const mockCallback = jest.fn();
+const mockDatabase = {
+  ref: mockRef,
+  onValue: mockOnValue,
+  push: mockPush,
+  remove: mockRemove
+};
+const mockFirebase = {
+  initializeApp: jest.fn(),
+  getDatabase: jest.fn(() => mockDatabase)
+};
+global.firebaseMock = mockFirebase;
 
-    // Mock Firebase methods
-    const mockDatabase = {
-      ref: jest.fn(() => ({
-        onValue: jest.fn((callback) => {
-          // Simulate data for the current week
-          const bookings = {
-            booking1: { email: 'test@example.com', date: '2024-05-16' },
-            booking2: { email: 'test@example.com', date: '2024-05-18' }
-          };
-          // Call the callback with the snapshot data
-          callback({ val: () => bookings });
-        })
-      }))
-    };
+// Mock the Firebase query functions
+global.query = jest.fn();
+global.orderByChild = jest.fn();
+global.equalTo = jest.fn();
 
-    // Call the function to be tested
-    checkBookingLimit('test@example.com', '2024-05-20', mockCallback);
-
-    // Assertions
-    expect(mockDatabase.ref).toHaveBeenCalledWith('bookings');
-    expect(mockCallback).toHaveBeenCalledWith(true); // Should allow booking
+describe('Firebase Functions', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
+
+  test('setupFormSubmission adds submit event listener', () => {
+    setupFormSubmission(submitHandler, document);
+    expect(document.getElementById).toHaveBeenCalledWith('bookingForm');
+    expect(mockAddEventListener).toHaveBeenCalled();
+  });
+
+  test('submitHandler prevents default submission and calls checkBookingLimit', () => {
+    const e = { preventDefault: jest.fn() };
+    const checkBookingLimitMock = jest.fn();
+    submitHandler(e, checkBookingLimitMock, jest.fn(), jest.fn(), document);
+    expect(e.preventDefault).toHaveBeenCalled();
+    expect(checkBookingLimitMock).toHaveBeenCalled();
+  });
+
+  test('checkBookingLimit checks booking limit and invokes callback', () => {
+    const callbackMock = jest.fn();
+    checkBookingLimit('test@test.com', '2024-05-21', callbackMock);
+    expect(mockRef).toHaveBeenCalledWith('bookings');
+    expect(mockOnValue).toHaveBeenCalled();
+    // Simulate callback invocation
+    mockOnValue.mock.calls[0][1]({ val: () => ({ testKey: { date: '2024-05-21' } }) });
+    expect(callbackMock).toHaveBeenCalled();
+  });
+
+  test('fetchBookings fetches bookings and updates table', () => {
+    fetchBookings();
+    expect(mockRef).toHaveBeenCalledWith('bookings');
+    expect(mockOnValue).toHaveBeenCalled();
+    // Simulate snapshot data
+    const snapshotData = { testKey: { name: 'Test Name', email: 'test@test.com', date: '2024-05-21' } };
+    mockOnValue.mock.calls[0][1]({ val: () => snapshotData });
+    expect(document.querySelector).toHaveBeenCalledWith('#bookingsTable tbody');
+    expect(document.querySelector().innerHTML).not.toEqual('');
+  });
+
+  // Add more tests for editBooking and deleteBooking functions if needed
 });

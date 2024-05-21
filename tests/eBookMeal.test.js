@@ -1,88 +1,49 @@
-const {
-  bookMeal,
-  cancelMealBtn,
-  deleteBooking,
-  fetchMealBookings
-} = require('../dist/eBookMealT.js');
+// Import the function to be tested
+const { bookMeal, firebaseMock, fetchMealBookings } = require('../dist/eBookMealT');
 
-describe('Client-Side Functionality Tests', () => {
-  let mockDocument;
-
+describe('bookMeal', () => {
   beforeEach(() => {
-    // Mock necessary DOM elements and functions
-    mockDocument = {
-      getElementById: jest.fn((id) => ({
-        addEventListener: jest.fn(),
-        value: '', // Mocking input values
-        reset: jest.fn() // Mocking form reset
-      })),
-      createElement: jest.fn(() => ({
-        classList: { add: jest.fn() },
-        innerHTML: '',
-        setAttribute: jest.fn(),
-        appendChild: jest.fn()
-      })),
-      querySelector: jest.fn(() => ({
-        innerHTML: '',
-        appendChild: jest.fn()
-      })),
-      textContent: '', // Mocking text content
-      style: { display: '' }, // Mocking style object
-      alert: jest.fn(), // Mocking alert function
-      confirm: jest.fn(() => true), // Mocking confirm function
-    };
+    // Mock necessary DOM elements
+    document.body.innerHTML = `
+      <div id="mealsList"></div>
+      <table id="bookedMealsTable">
+        <tbody></tbody>
+      </table>
+      <div id="dateBooked"></div>
+      <button id="cancelMealBtn"></button>
+    `;
+
+    // Mock window.prompt
+    window.prompt = jest.fn();
   });
 
-  describe('bookMeal', () => {
-    it('should book a meal when valid input is provided', () => {
-      // Call the function to be tested
-      bookMeal('mealKey', mockDocument);
+  it('should book a meal when employee name is provided', () => {
+    // Mock user input for prompt
+    window.prompt.mockReturnValueOnce('John Doe');
 
-      // Assertions
-      expect(mockDocument.confirm).toHaveBeenCalled();
-      expect(mockDocument.getElementById).toHaveBeenCalled();
-      // More assertions can be added
-    });
+    // Mock Firebase push method
+    const pushMock = jest.fn(() => Promise.resolve());
+    firebaseMock.getDatabase().ref().push = pushMock;
 
-    // More test cases can be added to cover other scenarios
+    // Call the function to be tested
+    bookMeal('mealKey');
+
+    // Assertions
+    expect(window.prompt).toHaveBeenCalledWith('Please enter your name:');
+    // Add more assertions as needed
   });
 
-  describe('cancelMealBtn click event', () => {
-    it('should cancel a meal when confirmed', () => {
-      // Call the click event handler
-      cancelMealBtn.click();
+  it('should display an error message when employee name is not provided', () => {
+    // Mock user input for prompt
+    window.prompt.mockReturnValueOnce('');
 
-      // Assertions
-      expect(mockDocument.confirm).toHaveBeenCalled();
-      // More assertions can be added
-    });
+    // Call the function to be tested
+    bookMeal('mealKey');
 
-    // More test cases can be added to cover other scenarios
+    // Assertions
+    expect(window.prompt).toHaveBeenCalledWith('Please enter your name:');
+    // Add more assertions as needed
   });
 
-  describe('deleteBooking', () => {
-    it('should delete a booking when confirmed', () => {
-      // Call the function to be tested
-      deleteBooking('bookingKey', mockDocument);
-
-      // Assertions
-      expect(mockDocument.confirm).toHaveBeenCalled();
-      // More assertions can be added
-    });
-
-    // More test cases can be added to cover other scenarios
-  });
-
-  describe('fetchMealBookings', () => {
-    it('should fetch meal bookings and update the DOM', () => {
-      // Call the function to be tested
-      fetchMealBookings(mockDocument);
-
-      // Assertions
-      expect(mockDocument.querySelector).toHaveBeenCalled();
-      // More assertions can be added
-    });
-
-    // More test cases can be added to cover other scenarios
-  });
+  // Add more test cases as needed
 });

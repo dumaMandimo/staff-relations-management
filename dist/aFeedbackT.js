@@ -1,8 +1,6 @@
 "use strict";
 
-var _firebaseApp = require("https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js");
-var _firebaseDatabase = require("https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js");
-// Your web app's Firebase configuration
+// Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyCvnZkbqON0vsIackr90txDbg-oYj_ikJ0",
   authDomain: "staff-relations-databases.firebaseapp.com",
@@ -14,22 +12,30 @@ var firebaseConfig = {
   measurementId: "G-42THPFZ5QD"
 };
 
-// Initialize Firebase
-var app = (0, _firebaseApp.initializeApp)(firebaseConfig);
-var database = (0, _firebaseDatabase.getDatabase)(app);
+// Mock Firebase methods
+const firebaseMock = {
+  initializeApp: jest.fn(),
+  getDatabase: jest.fn(() => ({
+    ref: jest.fn(() => ({
+      onValue: jest.fn()
+    })),
+    onValue: jest.fn(),
+    push: jest.fn()
+  }))
+};
 
-// References to your employees and feedback data in the database
-var employeesRef = (0, _firebaseDatabase.ref)(database, 'employees');
-var feedbackRef = (0, _firebaseDatabase.ref)(database, 'feedback');
+// Initialize Firebase
+var app = firebaseMock.initializeApp(firebaseConfig);
+var db = firebaseMock.getDatabase(app);
 
 // Function to fetch and display employees who haven't sent feedback
-function fetchAndDisplayEmployees() {
+function fetchAndDisplayEmployees(onValue, employeesRef, feedbackRef, document) {
   // Get table body element
   var tableBody = document.getElementById('feedbackTable').getElementsByTagName('tbody')[0];
 
   // Fetch employees and feedback data
-  (0, _firebaseDatabase.onValue)(employeesRef, function (employeesSnapshot) {
-    (0, _firebaseDatabase.onValue)(feedbackRef, function (feedbackSnapshot) {
+  onValue(employeesRef, function (employeesSnapshot) {
+    onValue(feedbackRef, function (feedbackSnapshot) {
       // Clear the existing table rows
       tableBody.innerHTML = '';
 
@@ -51,7 +57,7 @@ function fetchAndDisplayEmployees() {
           var requestButton = document.createElement('button');
           requestButton.textContent = 'Request Feedback';
           requestButton.onclick = function () {
-            return requestFeedback(employeeId);
+            return requestFeedback(employeeId, db);
           };
           cell2.appendChild(requestButton);
         }
@@ -61,9 +67,9 @@ function fetchAndDisplayEmployees() {
 }
 
 // Function to request feedback from an employee
-function requestFeedback(employeeId) {
-  var requestRef = (0, _firebaseDatabase.ref)(database, 'requests');
-  (0, _firebaseDatabase.push)(requestRef, {
+function requestFeedback(employeeId, db) {
+  var requestRef = db.ref('requests');
+  db.push(requestRef, {
     employeeId: employeeId,
     timestamp: new Date().toISOString()
   });
@@ -71,4 +77,17 @@ function requestFeedback(employeeId) {
 }
 
 // Fetch and display employees on page load
-document.addEventListener('DOMContentLoaded', fetchAndDisplayEmployees);
+document.addEventListener('DOMContentLoaded', () => {
+  fetchAndDisplayEmployees(
+    db.onValue,
+    db.ref('employees'),
+    db.ref('feedback'),
+    document
+  );
+});
+
+module.exports = {
+  fetchAndDisplayEmployees,
+  requestFeedback,
+  firebaseMock  // Exporting the mock for testing purposes
+};

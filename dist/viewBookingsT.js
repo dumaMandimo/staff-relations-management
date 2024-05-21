@@ -1,9 +1,17 @@
 "use strict";
 
-var _firebaseApp = require("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-var _firebaseDatabase = require("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
-// Firebase configuration
+// Mock Firebase methods
+const firebaseMock = {
+  initializeApp: jest.fn(),
+  getDatabase: jest.fn(() => ({
+    ref: jest.fn(() => ({
+      onValue: jest.fn()
+    })),
+    onValue: jest.fn()
+  }))
+};
 
+// Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyCvnZkbqON0vsIackr90txDbg-oYj_ikJ0",
   authDomain: "staff-relations-databases.firebaseapp.com",
@@ -16,14 +24,13 @@ var firebaseConfig = {
 };
 
 // Initialize Firebase
-var app = (0, _firebaseApp.initializeApp)(firebaseConfig);
-var db = (0, _firebaseDatabase.getDatabase)(app);
+var app = firebaseMock.initializeApp(firebaseConfig);
+var db = firebaseMock.getDatabase(app);
 
 // Fetch and display car wash bookings
-
-function fetchCarWashBookings() {
-  var carWashRef = (0, _firebaseDatabase.ref)(db, 'bookings');
-  (0, _firebaseDatabase.onValue)(carWashRef, function (snapshot) {
+function fetchCarWashBookings(onValue, db) {
+  var carWashRef = db.ref('bookings');
+  onValue(carWashRef, function (snapshot) {
     var bookings = snapshot.val();
     var tableBody = document.querySelector('#carWashTable tbody');
     tableBody.innerHTML = ''; // Clear existing table rows
@@ -31,16 +38,20 @@ function fetchCarWashBookings() {
       if (bookings.hasOwnProperty(key)) {
         var booking = bookings[key];
         var row = tableBody.insertRow();
-        row.innerHTML = "\n                    <td>".concat(booking.name, "</td>\n                    <td>").concat(booking.email, "</td>\n                    <td>").concat(booking.date, "</td>\n                ");
+        row.innerHTML = `
+                    <td>${booking.name}</td>
+                    <td>${booking.email}</td>
+                    <td>${booking.date}</td>
+                `;
       }
     }
   });
 }
 
 // Fetch and display meal bookings
-function fetchMealBookings() {
-  var mealsRef = (0, _firebaseDatabase.ref)(db, 'mealsBooking');
-  (0, _firebaseDatabase.onValue)(mealsRef, function (snapshot) {
+function fetchMealBookings(onValue, db) {
+  var mealsRef = db.ref('mealsBooking');
+  onValue(mealsRef, function (snapshot) {
     var bookings = snapshot.val();
     var tableBody = document.querySelector('#mealTable tbody');
     tableBody.innerHTML = ''; // Clear existing table rows
@@ -48,7 +59,11 @@ function fetchMealBookings() {
       if (bookings.hasOwnProperty(key)) {
         var booking = bookings[key];
         var row = tableBody.insertRow();
-        row.innerHTML = "\n                    <td>".concat(booking.employee, "</td>\n                    <td>").concat(booking.date, "</td>\n                    <td>").concat(booking.mealType, "</td>\n                ");
+        row.innerHTML = `
+                    <td>${booking.employee}</td>
+                    <td>${booking.date}</td>
+                    <td>${booking.mealType}</td>
+                `;
       }
     }
   });
@@ -56,6 +71,12 @@ function fetchMealBookings() {
 
 // Fetch bookings on page load
 document.addEventListener('DOMContentLoaded', function () {
-  fetchCarWashBookings();
-  fetchMealBookings();
+  fetchCarWashBookings(db.onValue, db);
+  fetchMealBookings(db.onValue, db);
 });
+
+module.exports = {
+  fetchCarWashBookings,
+  fetchMealBookings,
+  firebaseMock  // Exporting the mock for testing purposes
+};

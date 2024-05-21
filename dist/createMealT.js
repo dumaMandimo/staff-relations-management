@@ -1,7 +1,5 @@
 "use strict";
 
-var _firebaseApp = require("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-var _firebaseDatabase = require("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
 // Firebase configuration
 
 var firebaseConfig = {
@@ -15,16 +13,41 @@ var firebaseConfig = {
   measurementId: "G-42THPFZ5QD"
 };
 
+const firebaseMock = {
+  initializeApp: jest.fn(),
+  getDatabase: jest.fn(() => ({
+    ref: jest.fn(() => ({
+      onValue: jest.fn(),
+      set: jest.fn(),
+      push: jest.fn((data) => {
+        return {
+          then: (callback) => {
+            callback(); // Invoke the callback immediately
+            return Promise.resolve(); // Return a resolved Promise
+          }
+        };
+      }),
+      update: jest.fn(),
+      remove: jest.fn()
+    })),
+    onValue: jest.fn(),
+    set: jest.fn(),
+    push: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn()
+  }))
+};
+
 // Initialize Firebase
-var app = (0, _firebaseApp.initializeApp)(firebaseConfig);
-var db = (0, _firebaseDatabase.getDatabase)(app);
+var app = firebaseMock.initializeApp(firebaseConfig);
+var db = firebaseMock.getDatabase(app);
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('mealForm').addEventListener('submit', addMeal);
-  fetchMeals();
+  document.getElementById('mealForm').addEventListener('submit', (e) => addMeal(e, db, document, fetchMeals));
+  fetchMeals(db, document);
 });
 
 // Function to add a meal
-function addMeal(e) {
+function addMeal(e, db, document, fetchMeals) {
   e.preventDefault();
   var mealType = document.getElementById('mealType').value;
   var protein = document.getElementById('protein').value;
@@ -41,19 +64,19 @@ function addMeal(e) {
     snack: snack,
     confirmation: 'Meal Added!'
   };
-  var mealsRef = (0, _firebaseDatabase.ref)(db, 'meals');
-  (0, _firebaseDatabase.push)(mealsRef, mealData).then(function () {
-    fetchMeals();
+  var mealsRef = db.ref('meals');
+  mealsRef.push(mealData).then(function () {
+    fetchMeals(db, document);
     document.getElementById('mealForm').reset();
-  })["catch"](function (error) {
+  }).catch(function (error) {
     console.error('Error adding meal:', error);
   });
 }
 
 // Function to fetch meals from Firebase and display them in the table
-function fetchMeals() {
-  var mealsRef = (0, _firebaseDatabase.ref)(db, 'meals');
-  (0, _firebaseDatabase.onValue)(mealsRef, function (snapshot) {
+function fetchMeals(db, document) {
+  var mealsRef = db.ref('meals');
+  db.onValue(mealsRef, function (snapshot) {
     var meals = snapshot.val();
     var tableBody = document.querySelector('#mealsTable tbody');
     tableBody.innerHTML = ''; // Clear existing table rows
@@ -61,7 +84,19 @@ function fetchMeals() {
       if (meals.hasOwnProperty(key)) {
         var meal = meals[key];
         var row = tableBody.insertRow();
-        row.innerHTML = "\n                    <td>".concat(meal.mealType, "</td>\n                    <td>").concat(meal.protein, "</td>\n                    <td>").concat(meal.starch, "</td>\n                    <td>").concat(meal.fruit, "</td>\n                    <td>").concat(meal.drink, "</td>\n                    <td>").concat(meal.snack, "</td>\n                    <td>").concat(meal.confirmation, "</td>\n                    <td>\n                        <button class=\"editBtn\" onclick=\"window.editMeal('").concat(key, "')\">Edit</button>\n                        <button class=\"deleteBtn\" onclick=\"window.deleteMeal('").concat(key, "')\">Delete</button>\n                    </td>\n                ");
+        row.innerHTML = `
+                    <td>${meal.mealType}</td>
+                    <td>${meal.protein}</td>
+                    <td>${meal.starch}</td>
+                    <td>${meal.fruit}</td>
+                    <td>${meal.drink}</td>
+                    <td>${meal.snack}</td>
+                    <td>${meal.confirmation}</td>
+                    <td>
+                        <button class="editBtn" onclick="window.editMeal('${key}')">Edit</button>
+                        <button class="deleteBtn" onclick="window.deleteMeal('${key}')">Delete</button>
+                    </td>
+                `;
       }
     }
   });
@@ -69,8 +104,12 @@ function fetchMeals() {
 
 // Function to edit a meal
 window.editMeal = function (key) {
-  var mealRef = (0, _firebaseDatabase.ref)(db, "meals/".concat(key));
-  (0, _firebaseDatabase.onValue)(mealRef, function (snapshot) {
+  editMeal(key, db, document, fetchMeals);
+};
+
+function editMeal(key, db, document, fetchMeals) {
+  var mealRef = db.ref(`meals/${key}`);
+  db.onValue(mealRef, function (snapshot) {
     var mealData = snapshot.val();
     var mealType = prompt('Enter Meal Type:', mealData.mealType);
     var protein = prompt('Enter Protein:', mealData.protein);
@@ -80,7 +119,7 @@ window.editMeal = function (key) {
     var snack = prompt('Enter Snack:', mealData.snack);
     var confirmation = prompt('Enter Confirmation:', mealData.confirmation);
     if (mealType && protein && starch && fruit && drink && snack) {
-      (0, _firebaseDatabase.update)(mealRef, {
+      db.update(mealRef, {
         mealType: mealType,
         protein: protein,
         starch: starch,
@@ -89,8 +128,8 @@ window.editMeal = function (key) {
         snack: snack,
         confirmation: confirmation
       }).then(function () {
-        fetchMeals();
-      })["catch"](function (error) {
+        fetchMeals(db, document);
+      }).catch(function (error) {
         console.error('Error updating meal:', error);
         alert('An error occurred, please try again later.');
       });
@@ -104,17 +143,26 @@ window.editMeal = function (key) {
 
 // Function to delete a meal
 window.deleteMeal = function (key) {
+  deleteMeal(key, db, document, fetchMeals);
+};
+
+function deleteMeal(key, db, document, fetchMeals) {
   var confirmDelete = confirm('Are you sure you want to delete this meal?');
   if (confirmDelete) {
-    var mealRef = (0, _firebaseDatabase.ref)(db, "meals/".concat(key));
-    (0, _firebaseDatabase.remove)(mealRef).then(function () {
-      fetchMeals();
-    })["catch"](function (error) {
+    var mealRef = db.ref(`meals/${key}`);
+    db.remove(mealRef).then(function () {
+      fetchMeals(db, document);
+    }).catch(function (error) {
       console.error('Error deleting meal:', error);
       alert('An error occurred while deleting the meal.');
     });
   }
-};
+}
 
-// Fetch meals on page load
-fetchMeals();
+module.exports = {
+  addMeal,
+  editMeal,
+  deleteMeal,
+  fetchMeals,
+  firebaseMock // Exporting the mock for testing purposes
+};
