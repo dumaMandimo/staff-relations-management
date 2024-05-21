@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1716286484282" clover="3.2.0">
-  <project timestamp="1716286484282" name="All files">
+<coverage generated="1716292688084" clover="3.2.0">
+  <project timestamp="1716292688085" name="All files">
     <metrics statements="308" coveredstatements="136" conditionals="50" coveredconditionals="7" methods="92" coveredmethods="34" elements="450" coveredelements="177" complexity="0" loc="308" ncloc="308" packages="1" files="6" classes="6"/>
     <file name="aFeedbackT.js" path="C:\Users\dumam\OneDrive\Documents\GitHub\staff-relations-management\dist\aFeedbackT.js">
       <metrics statements="32" coveredstatements="26" conditionals="2" coveredconditionals="2" methods="10" coveredmethods="6"/>
