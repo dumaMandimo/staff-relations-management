@@ -5,6 +5,7 @@
 <ul>
   <li>Clone the repository: 
     <p>The repository link will be found when you click the "Code" button on GitHub.</p>
+    <p>Run "git clone https://github.com/dumaMandimo/staff-relations-management.git" on your local machine.</p>
   </li>
   <li>Install Dependencies on your local machine: 
     <p>Run <code>npm install</code> in the command line terminal.</p>
