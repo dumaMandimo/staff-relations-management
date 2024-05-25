@@ -2,11 +2,16 @@
 const { fetchCarWashBookings, fetchMealBookings, firebaseMock } = require('../dist/viewBookingsT');
 
 // Mock document object
+const mockTableBody = {
+  innerHTML: '',
+  insertRow: jest.fn()
+};
 const mockDocument = {
-  querySelector: jest.fn(() => ({
-    innerHTML: '',
-    insertRow: jest.fn()
-  })),
+  querySelector: jest.fn(id => {
+    if (id === '#carWashTable tbody') return mockTableBody;
+    if (id === '#mealTable tbody') return mockTableBody;
+    return null;
+  }),
   addEventListener: jest.fn((event, callback) => {
     if (event === 'DOMContentLoaded') callback();
   })
@@ -30,7 +35,7 @@ describe('Fetch car wash bookings function', () => {
     expect(onValueMock).toHaveBeenCalledWith(expect.any(Function), firebaseMock.getDatabase().ref('bookings'));
     expect(mockDocument.querySelector).toHaveBeenCalledWith('#carWashTable tbody');
     expect(snapshotMock.val).toHaveBeenCalled();
-    expect(mockDocument.querySelector().insertRow).toHaveBeenCalledTimes(2);
+    expect(mockTableBody.insertRow).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -52,6 +57,6 @@ describe('Fetch meal bookings function', () => {
     expect(onValueMock).toHaveBeenCalledWith(expect.any(Function), firebaseMock.getDatabase().ref('mealsBooking'));
     expect(mockDocument.querySelector).toHaveBeenCalledWith('#mealTable tbody');
     expect(snapshotMock.val).toHaveBeenCalled();
-    expect(mockDocument.querySelector().insertRow).toHaveBeenCalledTimes(2);
+    expect(mockTableBody.insertRow).toHaveBeenCalledTimes(2);
   });
 });

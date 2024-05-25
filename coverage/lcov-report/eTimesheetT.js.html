@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.27% </span>
+                <span class="strong">78.37% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>78/111</span>
+                <span class='fraction'>87/111</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">46.66% </span>
+                <span class="strong">56.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/30</span>
+                <span class='fraction'>17/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.42% </span>
+                <span class="strong">73.68% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>13/19</span>
+                <span class='fraction'>14/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70% </span>
+                <span class="strong">79.09% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>77/110</span>
+                <span class='fraction'>87/110</span>
             </div>
         
             
@@ -381,14 +381,14 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -400,11 +400,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -535,7 +535,7 @@ function showAlert(message, className) {
   div.appendChild(document.createTextNode(message));
   const body = document.querySelector("body");
   body.insertBefore(div, body.firstChild);
-  setTimeout(() =&gt; document.querySelector(".alert").remove(), 3000);
+  setTimeout(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >document.querySelector(".alert").remove(),</span> 3000);
 }
 &nbsp;
 // Function to calculate task duration
@@ -601,14 +601,14 @@ function loadTasksFromFirebase(email) {
   const tableBody = document.querySelector("#task-list");
   tableBody.innerHTML = ""; // Clear existing tasks
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  firebaseMock.onValue(tasksRef,  <span class="fstat-no" title="function not covered" >(s</span>napshot) =&gt; {</span>
-    const tasks = <span class="cstat-no" title="statement not covered" >snapshot.val();</span>
-<span class="cstat-no" title="statement not covered" >    if (tasks) {</span>
-<span class="cstat-no" title="statement not covered" >      Object.keys(tasks).forEach(<span class="fstat-no" title="function not covered" >(t</span>askId) =&gt; {</span>
-        const task = <span class="cstat-no" title="statement not covered" >tasks[taskId];</span>
-<span class="cstat-no" title="statement not covered" >        if (task.employeeEmail === email) {</span>
-          const newRow = <span class="cstat-no" title="statement not covered" >document.createElement("tr");</span>
-<span class="cstat-no" title="statement not covered" >          newRow.innerHTML = `</span>
+  firebaseMock.onValue(tasksRef,  (snapshot) =&gt; {
+    const tasks = snapshot.val();
+    if (tasks) {
+      Object.keys(tasks).forEach((taskId) =&gt; {
+        const task = tasks[taskId];
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (task.employeeEmail === email) {
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
             &lt;td&gt;${task.employeeName}&lt;/td&gt;
             &lt;td&gt;${task.employeeEmail}&lt;/td&gt;
             &lt;td&gt;${task.task}&lt;/td&gt;
@@ -620,11 +620,11 @@ function loadTasksFromFirebase(email) {
               &lt;button class="btn btn-danger btn-sm delete" data-id="${taskId}"&gt;Delete&lt;/button&gt;
             &lt;/td&gt;
           `;
-<span class="cstat-no" title="statement not covered" >          tableBody.appendChild(newRow);</span>
+          tableBody.appendChild(newRow);
         }
       });
     } else {
-<span class="cstat-no" title="statement not covered" >      showAlert("No tasks found!", "info");</span>
+      showAlert("No tasks found!", "info");
     }
   });
 }
@@ -730,7 +730,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-05-25T19:44:10.574Z
+                at 2024-05-25T20:03:56.995Z
             </div>
         <script src="prettify.js"></script>
         <script>

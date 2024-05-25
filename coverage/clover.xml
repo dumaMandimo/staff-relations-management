@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1716666250640" clover="3.2.0">
-  <project timestamp="1716666250640" name="All files">
-    <metrics statements="375" coveredstatements="231" conditionals="76" coveredconditionals="26" methods="101" coveredmethods="61" elements="552" coveredelements="318" complexity="0" loc="375" ncloc="375" packages="1" files="7" classes="7"/>
+<coverage generated="1716667437165" clover="3.2.0">
+  <project timestamp="1716667437165" name="All files">
+    <metrics statements="375" coveredstatements="241" conditionals="76" coveredconditionals="29" methods="101" coveredmethods="62" elements="552" coveredelements="332" complexity="0" loc="375" ncloc="375" packages="1" files="7" classes="7"/>
     <file name="aFeedbackT.js" path="C:\Users\dumam\OneDrive\Documents\GitHub\staff-relations-management\dist\aFeedbackT.js">
       <metrics statements="32" coveredstatements="26" conditionals="2" coveredconditionals="2" methods="10" coveredmethods="6"/>
       <line num="4" count="1" type="stmt"/>
@@ -218,7 +218,7 @@
       <line num="187" count="1" type="stmt"/>
     </file>
     <file name="eTimesheetT.js" path="C:\Users\dumam\OneDrive\Documents\GitHub\staff-relations-management\dist\eTimesheetT.js">
-      <metrics statements="110" coveredstatements="77" conditionals="30" coveredconditionals="14" methods="19" coveredmethods="13"/>
+      <metrics statements="110" coveredstatements="87" conditionals="30" coveredconditionals="17" methods="19" coveredmethods="14"/>
       <line num="2" count="1" type="stmt"/>
       <line num="4" count="1" type="stmt"/>
       <line num="5" count="0" type="stmt"/>
@@ -267,16 +267,16 @@
       <line num="91" count="1" type="stmt"/>
       <line num="96" count="3" type="stmt"/>
       <line num="97" count="3" type="stmt"/>
-      <line num="99" count="0" type="stmt"/>
-      <line num="100" count="0" type="stmt"/>
-      <line num="101" count="0" type="cond" truecount="0" falsecount="2"/>
-      <line num="102" count="0" type="stmt"/>
-      <line num="103" count="0" type="stmt"/>
-      <line num="104" count="0" type="cond" truecount="0" falsecount="2"/>
-      <line num="105" count="0" type="stmt"/>
-      <line num="106" count="0" type="stmt"/>
-      <line num="118" count="0" type="stmt"/>
-      <line num="122" count="0" type="stmt"/>
+      <line num="99" count="3" type="stmt"/>
+      <line num="100" count="2" type="stmt"/>
+      <line num="101" count="2" type="cond" truecount="2" falsecount="0"/>
+      <line num="102" count="1" type="stmt"/>
+      <line num="103" count="1" type="stmt"/>
+      <line num="104" count="1" type="cond" truecount="1" falsecount="1"/>
+      <line num="105" count="1" type="stmt"/>
+      <line num="106" count="1" type="stmt"/>
+      <line num="118" count="1" type="stmt"/>
+      <line num="122" count="1" type="stmt"/>
       <line num="129" count="2" type="stmt"/>
       <line num="130" count="2" type="stmt"/>
       <line num="131" count="2" type="cond" truecount="2" falsecount="0"/>
