@@ -1,9 +1,7 @@
-// bookingModule.test.js
-const { addTask, deleteTask, loadTasksFromFirebase, showAlert, calculateDuration, handleSubmit, firebaseMock } = require('../dist/eTimesheetT');
+const { addTask, deleteTask, handleSubmit, showAlert, calculateDuration, firebaseMock} = require('../dist/eTimesheetT');
 
 describe('Firebase Mock Tests', () => {
   beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
     jest.clearAllMocks();
     document.body.innerHTML = `
       <form id="retrieveTimesheetForm">
@@ -33,9 +31,10 @@ describe('Firebase Mock Tests', () => {
     document.querySelector("#endTime").value = "17:00";
     document.querySelector("#status3").checked = true;
 
+
     addTask();
 
-    expect(firebaseMock.push).toHaveBeenCalledWith(
+    expect(firebaseMock.addTask).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         employeeName: "John Doe",
@@ -62,7 +61,7 @@ describe('Firebase Mock Tests', () => {
 
   test('should delete a task', () => {
     deleteTask("task1");
-    expect(firebaseMock.remove).toHaveBeenCalledWith(firebaseMock.ref(expect.anything(), 'tasks/task1'));
+    expect(firebaseMock.deleteTask).toHaveBeenCalledWith(firebaseMock.ref(expect.anything(), 'tasks/task1'));
   });
 
   test('should handle form submission', () => {
@@ -71,6 +70,6 @@ describe('Firebase Mock Tests', () => {
 
     handleSubmit(mockEvent);
 
-    expect(firebaseMock.onValue).toHaveBeenCalledWith(expect.anything(), expect.any(Function));
+    expect(firebaseMock.on).toHaveBeenCalledWith("value", expect.any(Function));
   });
 });

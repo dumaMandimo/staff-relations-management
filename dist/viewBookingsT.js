@@ -11,17 +11,6 @@ const firebaseMock = {
   }))
 };
 
-// Firebase configuration
-var firebaseConfig = {
-  apiKey: "AIzaSyCvnZkbqON0vsIackr90txDbg-oYj_ikJ0",
-  authDomain: "staff-relations-databases.firebaseapp.com",
-  databaseURL: "https://staff-relations-databases-default-rtdb.firebaseio.com",
-  projectId: "staff-relations-databases",
-  storageBucket: "staff-relations-databases.appspot.com",
-  messagingSenderId: "356187917991",
-  appId: "1:356187917991:web:e2cd5bd697464c873a9582",
-  measurementId: "G-42THPFZ5QD"
-};
 
 // Initialize Firebase
 var app = firebaseMock.initializeApp(firebaseConfig);

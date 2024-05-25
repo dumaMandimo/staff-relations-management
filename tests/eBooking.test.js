@@ -3,8 +3,8 @@ const {
   setupFormSubmission,
   submitHandler,
   checkBookingLimit,
-  fetchBookings
-} = require('../dist/eBookingT'); // Replace 'your-file-name' with the actual file name
+  fetchBookings,
+} = require('../dist/eBookingT'); 
 
 // Mock document and Firebase dependencies
 const mockAddEventListener = jest.fn();
@@ -26,13 +26,19 @@ const mockOnValue = jest.fn((query, callback) => {
     val: () => ({ testKey: { date: '2024-05-21' } })
   });
 });
-const mockRef = jest.fn(() => ({
-  orderByChild: jest.fn().mockReturnThis(),
-  equalTo: jest.fn().mockReturnThis(),
-  onValue: mockOnValue,
-  push: mockPush,
-  remove: mockRemove
-}));
+
+const mockRef = jest.fn((path) => {
+  if (path === 'bookings') {
+    return {
+      orderByChild: jest.fn().mockReturnThis(),
+      equalTo: jest.fn().mockReturnThis(),
+      onValue: mockOnValue,
+      push: mockPush,
+      remove: mockRemove
+    };
+  }
+});
+
 
 const mockDatabase = {
   ref: mockRef,

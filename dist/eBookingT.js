@@ -1,4 +1,5 @@
-// Firebase configuration
+"use strict";
+
 var firebaseConfig = {
   apiKey: "AIzaSyCvnZkbqON0vsIackr90txDbg-oYj_ikJ0",
   authDomain: "staff-relations-databases.firebaseapp.com",
@@ -9,7 +10,6 @@ var firebaseConfig = {
   appId: "1:356187917991:web:e2cd5bd697464c873a9582",
   measurementId: "G-42THPFZ5QD"
 };
-
 // Mock Firebase methods
 const firebaseMock = {
   initializeApp: jest.fn(),

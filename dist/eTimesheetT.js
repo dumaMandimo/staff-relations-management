@@ -1,24 +1,26 @@
-"use strict";
-
-// Mock Firebase methods
+// Mock Setup
 const firebaseMock = {
   initializeApp: jest.fn(),
   getDatabase: jest.fn(() => ({
     ref: jest.fn(() => ({
       on: jest.fn(),
-      once: jest.fn()
+      once: jest.fn(),
+      push: jest.fn(),
+      remove: jest.fn()
     })),
     on: jest.fn(),
+    onValue: jest.fn(),
     push: jest.fn(),
-    child: jest.fn()
+    child: jest.fn(),
+    remove: jest.fn()
   })),
-  ref: jest.fn()
+  ref: jest.fn(),
+  onValue: jest.fn(), 
 };
 
 // Initialize Firebase
 const app = firebaseMock.initializeApp();
 const database = firebaseMock.getDatabase();
-
 const tasksRef = firebaseMock.ref(database, 'tasks');
 
 // Function to showAlert
@@ -50,18 +52,17 @@ function addTask() {
   const startTime = document.querySelector("#startTime").value;
   const endTime = document.querySelector("#endTime").value;
 
-  // Retrieve selected status from radio buttons
   let status = "";
   const inProgressRadio = document.querySelector("#status2");
   const completedRadio = document.querySelector("#status3");
   if (inProgressRadio.checked) {
-    status = inProgressRadio.nextElementSibling.textContent.trim();
+    status = "In Progress";
   } else if (completedRadio.checked) {
-    status = completedRadio.nextElementSibling.textContent.trim();
+    status = "Completed";
   }
+  const tasksRef = firebaseMock.ref('tasks');
 
-  // Save task to Firebase database
-  firebaseMock.push(tasksRef, {
+  tasksRef.push( {
     employeeName,
     employeeEmail,
     task,
@@ -70,10 +71,8 @@ function addTask() {
     status
   });
 
-  // Show success alert
   showAlert("Task Added!", "success");
 
-  // Clear input fields
   document.querySelector("#employeeName").value = "";
   document.querySelector("#employeeEmail").value = "";
   document.querySelector("#task").value = "";
@@ -84,10 +83,11 @@ function addTask() {
   completedRadio.checked = false;
 }
 
-
 // Function to delete a task
 function deleteTask(taskId) {
-  firebaseMock.remove(firebaseMock.ref(database, `tasks/${taskId}`));
+  const tasksRef = firebaseMock.ref('tasks');
+  const taskref = firebaseMock.ref(database, `tasks/${taskId}`);
+  taskref.remove();
   showAlert("Task Deleted!", "danger");
 }
 
@@ -96,15 +96,12 @@ function loadTasksFromFirebase(email) {
   const tableBody = document.querySelector("#task-list");
   tableBody.innerHTML = ""; // Clear existing tasks
 
-  // Retrieve tasks from the database
-  firebaseMock.onValue(tasksRef, (snapshot) => {
+  firebaseMock.onValue(tasksRef,  (snapshot) => {
     const tasks = snapshot.val();
     if (tasks) {
       Object.keys(tasks).forEach((taskId) => {
         const task = tasks[taskId];
-        // Check if the task's email matches the user's email
         if (task.employeeEmail === email) {
-          // Update to employeeEmail
           const newRow = document.createElement("tr");
           newRow.innerHTML = `
             <td>${task.employeeName}</td>
@@ -129,7 +126,7 @@ function loadTasksFromFirebase(email) {
 
 // Function to handle form submission
 async function handleSubmit(e) {
-  e.preventDefault(); // Prevent default form submission
+  e.preventDefault();
   const email = document.querySelector("#userEmail").value;
   if (email) {
     loadTasksFromFirebase(email);
@@ -138,22 +135,36 @@ async function handleSubmit(e) {
   }
 }
 
-// Event listener for form submission
-document.querySelector("#retrieveTimesheetForm").addEventListener("submit", handleSubmit);
+// Add event listeners if elements exist
+const retrieveTimesheetForm = document.querySelector("#retrieveTimesheetForm");
+if (retrieveTimesheetForm) {
+  retrieveTimesheetForm.addEventListener("submit", handleSubmit);
+}
+
+const downloadPDFButton = document.querySelector("#downloadPDF");
+if (downloadPDFButton) {
+  downloadPDFButton.addEventListener("click", () => {
+    downloadTimesheet("pdf");
+  });
+}
+
+const downloadCSVButton = document.querySelector("#downloadCSV");
+if (downloadCSVButton) {
+  downloadCSVButton.addEventListener("click", () => {
+    downloadTimesheet("csv");
+  });
+}
 
 // Event listener for editing a task
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("edit")) {
     const taskId = e.target.dataset.id;
-    // Fetch the task data from Firebase and populate the form fields for editing
     firebaseMock.child(tasksRef, taskId).once("value", (snapshot) => {
       const task = snapshot.val();
       document.querySelector("#employeeName").value = task.employeeName;
       document.querySelector("#employeeEmail").value = task.employeeEmail;
       document.querySelector("#task").value = task.task;
       document.querySelector("#date").value = task.date;
-      // You may need to parse the duration to separate hours and minutes
-      // Set the radio button based on the task status
       const inProgressRadio = document.querySelector("#status2");
       const completedRadio = document.querySelector("#status3");
       if (task.status === "In Progress") {
@@ -165,14 +176,12 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Event listener for downloading timesheet in PDF format
-document.querySelector("#downloadPDF").addEventListener("click", () => {
-  downloadTimesheet("pdf");
-});
-
-// Event listener for downloading timesheet in CSV format
-document.querySelector("#downloadCSV").addEventListener("click", () => {
-  downloadTimesheet("csv");
+// Event listener for deleting a task
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delete")) {
+    const taskId = e.target.dataset.id;
+    deleteTask(taskId);
+  }
 });
 
 // Function to download timesheet in the specified format
@@ -184,7 +193,6 @@ function downloadTimesheet(format) {
     rows.forEach((row) => {
       let rowData = [];
       row.querySelectorAll("td").forEach((cell, index) => {
-        // Skip the last two columns (containing the delete and edit buttons)
         if (index !== row.cells.length - 2 && index !== row.cells.length - 1) {
           rowData.push(cell.textContent);
         }
@@ -200,21 +208,13 @@ function downloadTimesheet(format) {
   }
 }
 
-// Event listener for deleting a task
-document.addEventListener("click", (e) => {
-if (e.target.classList.contains("delete")) {
-const taskId = e.target.dataset.id;
-deleteTask(taskId);
-}
-});
-
 module.exports = {
-addTask,
-deleteTask,
-loadTasksFromFirebase,
-showAlert,
-calculateDuration,
-handleSubmit,
-downloadTimesheet,
-firebaseMock // Exporting the mock for testing purposes
+  addTask,
+  deleteTask,
+  loadTasksFromFirebase,
+  showAlert,
+  calculateDuration,
+  handleSubmit,
+  downloadTimesheet,
+  firebaseMock
 };

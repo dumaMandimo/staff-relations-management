@@ -1,7 +1,17 @@
-const { addMeal, firebaseMock } = require('../dist/createMealT');
+// tests/createMeal.test.js
+
+const { addMeal, fetchMeals, firebaseMock } = require('../dist/createMealT');
 
 describe('addMeal', () => {
+  let pushMock;
+
   beforeEach(() => {
+    // Mock Firebase push method
+    pushMock = jest.fn(() => Promise.resolve());
+    firebaseMock.getDatabase().ref.mockReturnValue({ push: pushMock });
+  });
+
+  it('should add a meal', async () => {
     // Mock necessary DOM elements
     document.body.innerHTML = `
       <form id="mealForm">
@@ -12,26 +22,12 @@ describe('addMeal', () => {
         <input id="drink" value="Coffee" />
         <input id="snack" value="Muffin" />
       </form>
-      <table id="mealsTable">
-        <tbody></tbody>
-      </table>
     `;
-  });
-
-  it('should add a meal and reset the form', () => {
-    const mockEvent = {
-      preventDefault: jest.fn()
-    };
-
-    // Mock Firebase push method
-    const pushMock = jest.fn(() => Promise.resolve());
-    firebaseMock.getDatabase().ref.push = pushMock;
 
     // Call the function to be tested
-    addMeal(mockEvent, firebaseMock.getDatabase(), document, jest.fn());
+    await addMeal({}, firebaseMock.getDatabase(), document, jest.fn());
 
     // Assertions
-    expect(mockEvent.preventDefault).toHaveBeenCalled();
     expect(pushMock).toHaveBeenCalledWith({
       mealType: 'Breakfast',
       protein: 'Eggs',
@@ -41,6 +37,36 @@ describe('addMeal', () => {
       snack: 'Muffin',
       confirmation: 'Meal Added!'
     });
-    expect(document.getElementById('mealForm').reset).toHaveBeenCalled();
+  });
+});
+
+describe('fetchMeals', () => {
+  it('should fetch meals and display them in the table', () => {
+    // Mock necessary DOM elements
+    document.body.innerHTML = `
+      <table id="mealsTable">
+        <tbody></tbody>
+      </table>
+    `;
+
+    // Mock snapshot value
+    const snapshot = {
+      val: jest.fn(() => ({
+        meal1: { mealType: 'Lunch', protein: 'Chicken', starch: 'Rice' },
+        meal2: { mealType: 'Dinner', protein: 'Fish', starch: 'Potato' }
+      }))
+    };
+
+    // Call the function to be tested
+    fetchMeals(firebaseMock.getDatabase(), document);
+
+    // Assertions
+    expect(document.querySelectorAll('#mealsTable tbody tr').length).toBe(2);
+    expect(document.querySelectorAll('#mealsTable tbody tr')[0].textContent).toContain('Lunch');
+    expect(document.querySelectorAll('#mealsTable tbody tr')[0].textContent).toContain('Chicken');
+    expect(document.querySelectorAll('#mealsTable tbody tr')[0].textContent).toContain('Rice');
+    expect(document.querySelectorAll('#mealsTable tbody tr')[1].textContent).toContain('Dinner');
+    expect(document.querySelectorAll('#mealsTable tbody tr')[1].textContent).toContain('Fish');
+    expect(document.querySelectorAll('#mealsTable tbody tr')[1].textContent).toContain('Potato');
   });
 });

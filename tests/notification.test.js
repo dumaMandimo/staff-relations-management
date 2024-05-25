@@ -1,4 +1,4 @@
-const { checkMealBooking, checkCarWashBooking, firebaseMock } = require('../dist/notificationsT');
+const { checkMealBooking, checkCarWashBooking, firebaseMock, firebaseConfig } = require('../dist/notificationsT');
 
 // Mocking displayNotification function
 const displayNotification = jest.fn();
