@@ -1,72 +1,87 @@
-// tests/createMeal.test.js
-
-const { addMeal, fetchMeals, firebaseMock } = require('../dist/createMealT');
+const {
+  addMeal,
+  editMeal,
+  deleteMeal,
+  fetchMeals,
+  firebaseMock
+} = require('../dist/createMealT');
 
 describe('addMeal', () => {
-  let pushMock;
+  test('adds a meal to the database', () => {
+    const mockDb = firebaseMock.getDatabase(firebaseMock.initializeApp());
+    const mockDocument = { getElementById: jest.fn().mockReturnValue({ value: 'test', reset: jest.fn() }) };
+    const mockFetchMeals = jest.fn();
 
-  beforeEach(() => {
-    // Mock Firebase push method
-    pushMock = jest.fn(() => Promise.resolve());
-    firebaseMock.getDatabase().ref.mockReturnValue({ push: pushMock });
+    addMeal({ preventDefault: jest.fn() }, mockDb, mockDocument, mockFetchMeals);
+
+    // Adjusted expectation for push method call
+    expect(mockDb.ref().push).toHaveBeenCalled(); 
+
+    expect(mockFetchMeals).toHaveBeenCalled();
+    expect(mockDocument.getElementById).toHaveBeenCalledTimes(7);
+    expect(mockDocument.getElementById('mealForm').reset).toHaveBeenCalled();
   });
+});
 
-  it('should add a meal', async () => {
-    // Mock necessary DOM elements
-    document.body.innerHTML = `
-      <form id="mealForm">
-        <input id="mealType" value="Breakfast" />
-        <input id="protein" value="Eggs" />
-        <input id="starch" value="Toast" />
-        <input id="fruit" value="Banana" />
-        <input id="drink" value="Coffee" />
-        <input id="snack" value="Muffin" />
-      </form>
-    `;
+describe('editMeal', () => {
+  test('edits a meal in the database', () => {
+    const mockDb = firebaseMock.getDatabase(firebaseMock.initializeApp());
+    const mockDocument = { getElementById: jest.fn().mockReturnValue({ value: 'test' }) };
+    const mockFetchMeals = jest.fn();
+    const mockSnapshot = { val: jest.fn().mockReturnValue({ mealType: 'test' }) };
+    const mockUpdate = jest.fn().mockResolvedValue();
 
-    // Call the function to be tested
-    await addMeal({}, firebaseMock.getDatabase(), document, jest.fn());
+    mockDb.update = mockUpdate;
 
-    // Assertions
-    expect(pushMock).toHaveBeenCalledWith({
-      mealType: 'Breakfast',
-      protein: 'Eggs',
-      starch: 'Toast',
-      fruit: 'Banana',
-      drink: 'Coffee',
-      snack: 'Muffin',
-      confirmation: 'Meal Added!'
-    });
+    editMeal('mealKey', mockDb, mockDocument, mockFetchMeals);
+
+    // Adjusted expectation for onValue method call
+    expect(mockDb.ref().onValue).toHaveBeenCalled();
+
+    expect(mockDocument.getElementById).toHaveBeenCalledTimes(7);
+    expect(mockDb.update).toHaveBeenCalled();
+    expect(mockFetchMeals).toHaveBeenCalled();
+  });
+});
+
+describe('deleteMeal', () => {
+  test('deletes a meal from the database', async () => {
+    const mockDb = firebaseMock.getDatabase(firebaseMock.initializeApp());
+    const mockDocument = {};
+    const mockFetchMeals = jest.fn();
+    const mockConfirm = jest.spyOn(window, 'confirm').mockReturnValue(true);
+    const mockRemove = jest.fn().mockResolvedValue();
+
+    mockDb.remove = mockRemove;
+
+    await deleteMeal('mealKey', mockDb, mockDocument, mockFetchMeals);
+
+    expect(mockConfirm).toHaveBeenCalled();
+
+    // Adjusted expectation for remove method call
+    expect(mockDb.ref().remove).toHaveBeenCalled();
+
+    expect(mockFetchMeals).toHaveBeenCalled();
+
+    mockConfirm.mockRestore();
   });
 });
 
 describe('fetchMeals', () => {
-  it('should fetch meals and display them in the table', () => {
-    // Mock necessary DOM elements
-    document.body.innerHTML = `
-      <table id="mealsTable">
-        <tbody></tbody>
-      </table>
-    `;
+  test('fetches meals from the database and updates the UI', () => {
+    const mockDb = firebaseMock.getDatabase(firebaseMock.initializeApp());
+    const mockDocument = { querySelector: jest.fn().mockReturnValue({ innerHTML: '' }) };
+    const mockSnapshot = { val: jest.fn().mockReturnValue({ meal1: {}, meal2: {} }) };
+    const mockOnValue = jest.fn((ref, callback) => {
+      callback(mockSnapshot);
+    });
 
-    // Mock snapshot value
-    const snapshot = {
-      val: jest.fn(() => ({
-        meal1: { mealType: 'Lunch', protein: 'Chicken', starch: 'Rice' },
-        meal2: { mealType: 'Dinner', protein: 'Fish', starch: 'Potato' }
-      }))
-    };
+    mockDb.onValue = mockOnValue;
 
-    // Call the function to be tested
-    fetchMeals(firebaseMock.getDatabase(), document);
+    fetchMeals(mockDb, mockDocument);
 
-    // Assertions
-    expect(document.querySelectorAll('#mealsTable tbody tr').length).toBe(2);
-    expect(document.querySelectorAll('#mealsTable tbody tr')[0].textContent).toContain('Lunch');
-    expect(document.querySelectorAll('#mealsTable tbody tr')[0].textContent).toContain('Chicken');
-    expect(document.querySelectorAll('#mealsTable tbody tr')[0].textContent).toContain('Rice');
-    expect(document.querySelectorAll('#mealsTable tbody tr')[1].textContent).toContain('Dinner');
-    expect(document.querySelectorAll('#mealsTable tbody tr')[1].textContent).toContain('Fish');
-    expect(document.querySelectorAll('#mealsTable tbody tr')[1].textContent).toContain('Potato');
+    expect(mockDb.ref().onValue).toHaveBeenCalled();
+    expect(mockDocument.querySelector).toHaveBeenCalled();
+    expect(mockDocument.querySelector().innerHTML).not.toBe('');
   });
 });

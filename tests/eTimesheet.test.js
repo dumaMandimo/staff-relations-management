@@ -1,75 +1,203 @@
-const { addTask, deleteTask, handleSubmit, showAlert, calculateDuration, firebaseMock} = require('../dist/eTimesheetT');
+const {
+  addTask,
+  deleteTask,
+  loadTasksFromFirebase,
+  showAlert,
+  calculateDuration,
+  handleSubmit,
+  downloadTimesheet,
+  firebaseMock
+} = require('../dist/eTimesheetT');
 
-describe('Firebase Mock Tests', () => {
+jest.useFakeTimers();
+
+describe('showAlert', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    document.body.innerHTML = '';
+  });
+
+  it('should display an alert message', () => {
+    showAlert('Test Message', 'success');
+    const alert = document.querySelector('.alert-success');
+    expect(alert).not.toBeNull();
+    expect(alert.textContent).toBe('Test Message');
+  });
+
+  it('should remove the alert message after 3 seconds', () => {
+    showAlert('Test Message', 'success');
+    const alert = document.querySelector('.alert-success');
+    expect(alert).not.toBeNull();
+    jest.advanceTimersByTime(3000);
+    expect(document.querySelector('.alert-success')).toBeNull();
+  });
+});
+
+describe('calculateDuration', () => {
+  it('should calculate the correct duration', () => {
+    const duration = calculateDuration('08:00', '10:30');
+    expect(duration).toBe('2:30');
+  });
+});
+
+describe('addTask', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <input id="employeeName" value="John Doe">
+      <input id="employeeEmail" value="john@example.com">
+      <input id="task" value="Test Task">
+      <input id="date" value="2024-05-25">
+      <input id="startTime" value="09:00">
+      <input id="endTime" value="11:00">
+      <input type="radio" id="status2">
+      <input type="radio" id="status3">
+    `;
+    firebaseMock.ref.mockReturnValue({
+      push: jest.fn()
+    });
+  });
+
+  it('should add a new task and display a success alert', () => {
+    addTask();
+
+    expect(firebaseMock.ref).toHaveBeenCalledWith('tasks');
+    expect(firebaseMock.ref().push).toHaveBeenCalledWith({
+      employeeName: 'John Doe',
+      employeeEmail: 'john@example.com',
+      task: 'Test Task',
+      date: '2024-05-25',
+      duration: '2:00',
+      status: ''
+    });
+
+    const alert = document.querySelector('.alert-success');
+    expect(alert).not.toBeNull();
+    expect(alert.textContent).toBe('Task Added!');
+  });
+});
+
+describe('deleteTask', () => {
+  beforeEach(() => {
+    firebaseMock.ref.mockReturnValue({
+      remove: jest.fn()
+    });
+  });
+
+  it('should delete the task and display a danger alert', () => {
+    deleteTask('taskId123');
+
+    expect(firebaseMock.ref).toHaveBeenCalledWith(expect.anything(), 'tasks/taskId123');
+    expect(firebaseMock.ref().remove).toHaveBeenCalled();
+
+    const alert = document.querySelector('.alert-danger');
+    expect(alert).not.toBeNull();
+    expect(alert.textContent).toBe('Task Deleted!');
+  });
+});
+
+describe('loadTasksFromFirebase', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<tbody id="task-list"></tbody>';
+  });
+
+  it('should load tasks for the given email', () => {
+    const mockTasks = {
+      task1: {
+        employeeName: 'John Doe',
+        employeeEmail: 'john@example.com',
+        task: 'Test Task',
+        date: '2024-05-25',
+        duration: '2:00',
+        status: 'In Progress'
+      }
+    };
+
+    const mockSnapshot = {
+      val: jest.fn(() => mockTasks)
+    };
+
+    firebaseMock.onValue.mockImplementationOnce((ref, callback) => {
+      callback(mockSnapshot);
+    });
+
+    loadTasksFromFirebase('john@example.com');
+
+    const tableBody = document.querySelector('#task-list');
+    expect(tableBody.children.length).toBe(1);
+    expect(tableBody.children[0].innerHTML).toContain('John Doe');
+  });
+
+  it('should show an alert if no tasks are found', () => {
+    const mockSnapshot = {
+      val: jest.fn(() => null)
+    };
+
+    firebaseMock.onValue.mockImplementationOnce((ref, callback) => {
+      callback(mockSnapshot);
+    });
+
+    loadTasksFromFirebase('john@example.com');
+
+    const alert = document.querySelector('.alert-info');
+    expect(alert).not.toBeNull();
+    expect(alert.textContent).toBe('No tasks found!');
+  });
+});
+
+describe('handleSubmit', () => {
+  beforeEach(() => {
     document.body.innerHTML = `
       <form id="retrieveTimesheetForm">
-        <input type="text" id="userEmail" value="user@example.com" />
-        <button type="submit">Submit</button>
+        <input id="userEmail" value="john@example.com">
       </form>
-      <div id="task-list"></div>
-      <input type="text" id="employeeName" />
-      <input type="text" id="employeeEmail" />
-      <input type="text" id="task" />
-      <input type="date" id="date" />
-      <input type="time" id="startTime" />
-      <input type="time" id="endTime" />
-      <input type="radio" id="status2" />
-      <input type="radio" id="status3" />
-      <button id="downloadPDF"></button>
-      <button id="downloadCSV"></button>
+      <tbody id="task-list"></tbody>
     `;
   });
 
-  test('should add a new task', () => {
-    document.querySelector("#employeeName").value = "John Doe";
-    document.querySelector("#employeeEmail").value = "john@example.com";
-    document.querySelector("#task").value = "Task A";
-    document.querySelector("#date").value = "2023-05-21";
-    document.querySelector("#startTime").value = "09:00";
-    document.querySelector("#endTime").value = "17:00";
-    document.querySelector("#status3").checked = true;
+  it('should load tasks on form submission', async () => {
+    const form = document.querySelector('#retrieveTimesheetForm');
+    const event = new Event('submit');
+    jest.spyOn(event, 'preventDefault');
 
+    await handleSubmit(event);
 
-    addTask();
-
-    expect(firebaseMock.addTask).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        employeeName: "John Doe",
-        employeeEmail: "john@example.com",
-        task: "Task A",
-        date: "2023-05-21",
-        duration: "8:00",
-        status: "Completed"
-      })
-    );
-    expect(document.querySelector("#employeeName").value).toBe("");
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(firebaseMock.onValue).toHaveBeenCalled();
   });
 
-  test('should calculate duration correctly', () => {
-    const duration = calculateDuration("09:00", "17:00");
-    expect(duration).toBe("8:00");
+  it('should show an alert if email is empty', async () => {
+    document.querySelector('#userEmail').value = '';
+    const form = document.querySelector('#retrieveTimesheetForm');
+    const event = new Event('submit');
+    jest.spyOn(event, 'preventDefault');
+
+    await handleSubmit(event);
+
+    const alert = document.querySelector('.alert-danger');
+    expect(alert).not.toBeNull();
+    expect(alert.textContent).toBe('Please enter an email address.');
+  });
+});
+
+describe('downloadTimesheet', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <table id="task-list">
+        <tr>
+          <td>John Doe</td>
+          <td>john@example.com</td>
+          <td>Test Task</td>
+          <td>2024-05-25</td>
+          <td>2:00</td>
+          <td>In Progress</td>
+          <td><button class="edit" data-id="task1">Edit</button><button class="delete" data-id="task1">Delete</button></td>
+        </tr>
+      </table>
+    `;
   });
 
-  test('should show alert', () => {
-    showAlert("Test Alert", "info");
-    expect(document.querySelector(".alert")).not.toBeNull();
-    expect(document.querySelector(".alert").textContent).toBe("Test Alert");
-  });
-
-  test('should delete a task', () => {
-    deleteTask("task1");
-    expect(firebaseMock.deleteTask).toHaveBeenCalledWith(firebaseMock.ref(expect.anything(), 'tasks/task1'));
-  });
-
-  test('should handle form submission', () => {
-    const mockEvent = { preventDefault: jest.fn() };
-    document.querySelector("#userEmail").value = "user@example.com";
-
-    handleSubmit(mockEvent);
-
-    expect(firebaseMock.on).toHaveBeenCalledWith("value", expect.any(Function));
+  it('should download the timesheet as CSV', () => {
+    downloadTimesheet('csv');
+    const link = document.querySelector('a[download="timesheet.csv"]');
+    expect(link).not.toBeNull();
   });
 });
