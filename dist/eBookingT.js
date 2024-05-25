@@ -26,7 +26,7 @@ const firebaseMock = {
 };
 
 // Initialize Firebase
-var app = firebaseMock.initializeApp(firebaseConfig);
+var app = firebaseMock.initializeApp();
 var db = firebaseMock.getDatabase(app);
 
 // Form submission event listener
