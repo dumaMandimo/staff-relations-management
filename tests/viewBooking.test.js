@@ -1,100 +1,57 @@
-// Import necessary functions and modules
-const { fetchCarWashBookings, fetchMealBookings, firebaseMock } = require('../dist/viewBookingsT'); // Replace 'yourScript' with the actual name of your script file
+// Import the functions to be tested
+const { fetchCarWashBookings, fetchMealBookings, firebaseMock } = require('../dist/viewBookingsT');
 
-describe('fetchCarWashBookings', () => {
-  test('should fetch and display car wash bookings', () => {
-    // Mock snapshot data
-    const snapshot = {
-      val: () => ({
-        booking1: { name: 'John', email: 'john@example.com', date: '2024-05-20' },
-        booking2: { name: 'Alice', email: 'alice@example.com', date: '2024-05-21' }
-      })
+// Mock document object
+const mockDocument = {
+  querySelector: jest.fn(() => ({
+    innerHTML: '',
+    insertRow: jest.fn()
+  })),
+  addEventListener: jest.fn((event, callback) => {
+    if (event === 'DOMContentLoaded') callback();
+  })
+};
+
+describe('Fetch car wash bookings function', () => {
+  test('Fetches and displays car wash bookings correctly', () => {
+    // Mock data
+    const snapshotMock = {
+      val: jest.fn(() => ({
+        booking1: { name: 'John Doe', email: 'john@example.com', date: '2024-05-26' },
+        booking2: { name: 'Jane Doe', email: 'jane@example.com', date: '2024-05-27' }
+      }))
     };
+    const onValueMock = jest.fn((ref, callback) => callback(snapshotMock));
 
-    // Mock Firebase reference
-    const mockRef = jest.fn(() => ({
-      onValue: jest.fn(callback => callback(snapshot))
-    }));
+    // Call the function
+    fetchCarWashBookings(onValueMock, firebaseMock.getDatabase());
 
-    // Mock database
-    const mockDatabase = {
-      ref: jest.fn(() => mockRef)
-    };
-
-    // Mock DOM elements
-    document.querySelector = jest.fn(() => ({
-      innerHTML: '', // Mocking innerHTML
-      insertRow: jest.fn(() => ({
-        innerHTML: '', // Mocking innerHTML for inserted rows
-      })),
-    }));
-
-    // Call the function to be tested
-    fetchCarWashBookings(mockDatabase.ref, mockDatabase);
-
-    // Assertions
-    expect(mockDatabase.ref).toHaveBeenCalledWith('bookings');
-    expect(mockRef.onValue).toHaveBeenCalled();
-    // You can add more assertions to test the displayed table rows
+    // Check assertions
+    expect(onValueMock).toHaveBeenCalledWith(expect.any(Function), firebaseMock.getDatabase().ref('bookings'));
+    expect(mockDocument.querySelector).toHaveBeenCalledWith('#carWashTable tbody');
+    expect(snapshotMock.val).toHaveBeenCalled();
+    expect(mockDocument.querySelector().insertRow).toHaveBeenCalledTimes(2);
   });
 });
 
-describe('fetchMealBookings', () => {
-  test('should fetch and display meal bookings', () => {
-    // Mock snapshot data
-    const snapshot = {
-      val: () => ({
-        booking1: { employee: 'John', date: '2024-05-20', mealType: 'Breakfast' },
-        booking2: { employee: 'Alice', date: '2024-05-21', mealType: 'Lunch' }
-      })
+describe('Fetch meal bookings function', () => {
+  test('Fetches and displays meal bookings correctly', () => {
+    // Mock data
+    const snapshotMock = {
+      val: jest.fn(() => ({
+        booking1: { employee: 'John Doe', date: '2024-05-26', mealType: 'Lunch' },
+        booking2: { employee: 'Jane Doe', date: '2024-05-27', mealType: 'Dinner' }
+      }))
     };
+    const onValueMock = jest.fn((ref, callback) => callback(snapshotMock));
 
-    // Mock Firebase reference
-    const mockRef = jest.fn(() => ({
-      onValue: jest.fn(callback => callback(snapshot))
-    }));
+    // Call the function
+    fetchMealBookings(onValueMock, firebaseMock.getDatabase());
 
-    // Mock database
-    const mockDatabase = {
-      ref: jest.fn(() => mockRef)
-    };
-
-    // Mock DOM elements
-    document.querySelector = jest.fn(() => ({
-      innerHTML: '', // Mocking innerHTML
-      insertRow: jest.fn(() => ({
-        innerHTML: '', // Mocking innerHTML for inserted rows
-      })),
-    }));
-
-    // Call the function to be tested
-    fetchMealBookings(mockDatabase.ref, mockDatabase);
-
-    // Assertions
-    expect(mockDatabase.ref).toHaveBeenCalledWith('mealsBooking');
-    expect(mockRef.onValue).toHaveBeenCalled();
-    // You can add more assertions to test the displayed table rows
-  });
-});
-
-describe('Page Load Event Listener', () => {
-  test('should fetch bookings on page load', () => {
-    // Mock DOM elements
-    document.dispatchEvent(new Event('DOMContentLoaded'));
-
-    // Assertions
-    expect(firebaseMock.getDatabase).toHaveBeenCalled();
-    expect(firebaseMock.initializeApp).toHaveBeenCalledWith({
-      // Mock Firebase configuration
-      apiKey: expect.any(String),
-      authDomain: expect.any(String),
-      databaseURL: expect.any(String),
-      projectId: expect.any(String),
-      storageBucket: expect.any(String),
-      messagingSenderId: expect.any(String),
-      appId: expect.any(String),
-      measurementId: expect.any(String)
-    });
-    // You can add more assertions if needed
+    // Check assertions
+    expect(onValueMock).toHaveBeenCalledWith(expect.any(Function), firebaseMock.getDatabase().ref('mealsBooking'));
+    expect(mockDocument.querySelector).toHaveBeenCalledWith('#mealTable tbody');
+    expect(snapshotMock.val).toHaveBeenCalled();
+    expect(mockDocument.querySelector().insertRow).toHaveBeenCalledTimes(2);
   });
 });

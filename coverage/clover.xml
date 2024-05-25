@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1716665635814" clover="3.2.0">
-  <project timestamp="1716665635814" name="All files">
-    <metrics statements="375" coveredstatements="227" conditionals="76" coveredconditionals="26" methods="101" coveredmethods="60" elements="552" coveredelements="313" complexity="0" loc="375" ncloc="375" packages="1" files="7" classes="7"/>
+<coverage generated="1716666250640" clover="3.2.0">
+  <project timestamp="1716666250640" name="All files">
+    <metrics statements="375" coveredstatements="231" conditionals="76" coveredconditionals="26" methods="101" coveredmethods="61" elements="552" coveredelements="318" complexity="0" loc="375" ncloc="375" packages="1" files="7" classes="7"/>
     <file name="aFeedbackT.js" path="C:\Users\dumam\OneDrive\Documents\GitHub\staff-relations-management\dist\aFeedbackT.js">
       <metrics statements="32" coveredstatements="26" conditionals="2" coveredconditionals="2" methods="10" coveredmethods="6"/>
       <line num="4" count="1" type="stmt"/>
@@ -367,35 +367,35 @@
       <line num="67" count="1" type="stmt"/>
     </file>
     <file name="viewBookingsT.js" path="C:\Users\dumam\OneDrive\Documents\GitHub\staff-relations-management\dist\viewBookingsT.js">
-      <metrics statements="29" coveredstatements="13" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="5"/>
+      <metrics statements="29" coveredstatements="17" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="6"/>
       <line num="4" count="1" type="stmt"/>
-      <line num="6" count="1" type="stmt"/>
+      <line num="6" count="3" type="stmt"/>
       <line num="7" count="2" type="stmt"/>
       <line num="16" count="1" type="stmt"/>
       <line num="17" count="1" type="stmt"/>
-      <line num="21" count="2" type="stmt"/>
-      <line num="22" count="2" type="stmt"/>
-      <line num="23" count="0" type="stmt"/>
-      <line num="24" count="0" type="stmt"/>
-      <line num="25" count="0" type="stmt"/>
+      <line num="21" count="1" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
+      <line num="23" count="1" type="stmt"/>
+      <line num="24" count="1" type="stmt"/>
+      <line num="25" count="1" type="stmt"/>
       <line num="26" count="0" type="stmt"/>
       <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
       <line num="28" count="0" type="stmt"/>
       <line num="29" count="0" type="stmt"/>
       <line num="30" count="0" type="stmt"/>
-      <line num="42" count="2" type="stmt"/>
-      <line num="43" count="2" type="stmt"/>
-      <line num="44" count="0" type="stmt"/>
-      <line num="45" count="0" type="stmt"/>
-      <line num="46" count="0" type="stmt"/>
+      <line num="42" count="1" type="stmt"/>
+      <line num="43" count="1" type="stmt"/>
+      <line num="44" count="1" type="stmt"/>
+      <line num="45" count="1" type="stmt"/>
+      <line num="46" count="1" type="stmt"/>
       <line num="47" count="0" type="stmt"/>
       <line num="48" count="0" type="cond" truecount="0" falsecount="2"/>
       <line num="49" count="0" type="stmt"/>
       <line num="50" count="0" type="stmt"/>
       <line num="51" count="0" type="stmt"/>
       <line num="62" count="1" type="stmt"/>
-      <line num="63" count="1" type="stmt"/>
-      <line num="64" count="1" type="stmt"/>
+      <line num="63" count="0" type="stmt"/>
+      <line num="64" count="0" type="stmt"/>
       <line num="67" count="1" type="stmt"/>
     </file>
   </project>
