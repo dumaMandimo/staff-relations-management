@@ -25,3 +25,17 @@
 <ul>
   <li> Test Case documentation is located in the tests folder</li>
 </ul>
+
+<h3>Contributors</h3>
+<ul>
+  <li> Duma Mandimo- Student Number: 2548972</li>
+  <li> Geneva Mathebula- Student Number: 2467373</li>
+  <li> Olwethu Luthuli- Student Number: </li>
+  <li> Tumelo Mkwambe- Student Number: 2446873</li>
+  <li>Lupumlo Kolisi- Student Number: 2550646</li>
+  <li>Karabo Mnisi- Student Number: 2435547 </li>
+</ul>
+
+<h3>YouTube Demo: </h3>
+
+
