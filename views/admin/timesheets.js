@@ -95,7 +95,7 @@ function deleteTask(taskId) {
 }
 
 // Function to load tasks from Firebase database based on user's email
-function loadTasksFromFirebase(email) {
+function loadTasksFromFirebase() {
     const tableBody = document.querySelector("#task-list");
     tableBody.innerHTML = ""; // Clear existing tasks
 
@@ -106,7 +106,7 @@ function loadTasksFromFirebase(email) {
             Object.keys(tasks).forEach((taskId) => {
                 const task = tasks[taskId];
                 // Check if the task's email matches the user's email
-                if (task.employeeEmail === email) { // Update to employeeEmail
+                if (task.employeeEmail) { // Update to employeeEmail
                     const newRow = document.createElement("tr");
                     newRow.innerHTML = `
                         <td>${task.employeeName}</td>
@@ -140,7 +140,7 @@ async function displayTimesheets(){
         return response.json()
     }).then((json) => {
         let email = json.email;
-        loadTasksFromFirebase(email);
+        loadTasksFromFirebase();
     });
 }
 displayTimesheets();

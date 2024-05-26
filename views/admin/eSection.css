@@ -5,7 +5,8 @@ body {
   padding: 20px;
 }
 
-h1, h2 {
+h1,
+h2 {
   color: #11212D;
   text-align: center;
 }
@@ -68,11 +69,14 @@ tbody td {
   border-bottom: 1px solid #8AB2D5;
 }
 
-table, th, td {
+table,
+th,
+td {
   font-size: 16px;
 }
 
-td, th {
+td,
+th {
   padding: 12px;
 }
 
