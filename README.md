@@ -18,7 +18,7 @@
   <li>Run <code>npm start</code> in the terminal.</li>
   <li>Open the web browser and navigate to <code>http://localhost:3000</code>.</li>
   <li>Emails: aviatoemployee@gmail.com, aviotoadmin@gmail.com, aviotomanager@gmail.com</li>
-  <li>Password: Aviato2204</li>
+  <li>Password: Aviato2024</li>
 </ul>
 
 <h3>Test Documentation</h3>
