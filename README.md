@@ -17,3 +17,8 @@
   <li>Run <code>npm start</code> in the terminal.</li>
   <li>Open the web browser and navigate to <code>http://localhost:3000</code>.</li>
 </ul>
+
+<h3>Test Documentation</h3>
+<ul>
+  <li> Test Case documentation is located in the tests folder</li>
+</ul>
