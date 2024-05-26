@@ -3,26 +3,25 @@
 const firebaseMock = {
   initializeApp: jest.fn(),
   getDatabase: jest.fn(() => ({
-    ref: jest.fn(() => ({
-      onValue: jest.fn(),
-      set: jest.fn(),
-      push: jest.fn((data) => {
-        return {
-          then: (callback) => {
-            callback(); // Invoke the callback immediately
-            return Promise.resolve(); // Return a resolved Promise
-          }
-        };
+    ref: jest.fn((path) => ({
+      onValue: jest.fn((callback) => {
+        // Simulate the behavior of receiving a snapshot and invoking the callback
+        const mockSnapshot = { val: jest.fn(() => ({})) };
+        callback(mockSnapshot);
       }),
-      update: jest.fn(),
-      remove: jest.fn()
+      set: jest.fn(() => Promise.resolve()),
+      push: jest.fn((data) => ({
+        key: 'mockKey', // Return a mock key for the newly created child
+      })),
+      update: jest.fn(() => Promise.resolve()),
+      remove: jest.fn(() => Promise.resolve()),
     })),
     onValue: jest.fn(),
     set: jest.fn(),
     push: jest.fn(),
     update: jest.fn(),
-    remove: jest.fn()
-  }))
+    remove: jest.fn(),
+  })),
 };
 
 // Initialize Firebase
@@ -63,7 +62,7 @@ function addMeal(e, db, document, fetchMeals) {
 // Function to fetch meals from Firebase and display them in the table
 function fetchMeals(db, document) {
   var mealsRef = db.ref('meals');
-  db.onValue(mealsRef, function (snapshot) {
+  mealsRef.onValue(function (snapshot) {
     var meals = snapshot.val();
     var tableBody = document.querySelector('#mealsTable tbody');
     tableBody.innerHTML = ''; // Clear existing table rows
@@ -96,7 +95,7 @@ window.editMeal = function (key) {
 
 function editMeal(key, db, document, fetchMeals) {
   var mealRef = db.ref(`meals/${key}`);
-  db.onValue(mealRef, function (snapshot) {
+  mealRef.onValue(function (snapshot) {
     var mealData = snapshot.val();
     var mealType = prompt('Enter Meal Type:', mealData.mealType);
     var protein = prompt('Enter Protein:', mealData.protein);
@@ -106,7 +105,7 @@ function editMeal(key, db, document, fetchMeals) {
     var snack = prompt('Enter Snack:', mealData.snack);
     var confirmation = prompt('Enter Confirmation:', mealData.confirmation);
     if (mealType && protein && starch && fruit && drink && snack) {
-      db.update(mealRef, {
+      mealRef.update({
         mealType: mealType,
         protein: protein,
         starch: starch,
@@ -137,7 +136,7 @@ function deleteMeal(key, db, document, fetchMeals) {
   var confirmDelete = confirm('Are you sure you want to delete this meal?');
   if (confirmDelete) {
     var mealRef = db.ref(`meals/${key}`);
-    db.remove(mealRef).then(function () {
+    mealRef.remove().then(function () {
       fetchMeals(db, document);
     }).catch(function (error) {
       console.error('Error deleting meal:', error);

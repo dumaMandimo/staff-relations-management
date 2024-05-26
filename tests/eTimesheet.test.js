@@ -22,7 +22,7 @@ describe('showAlert', () => {
     expect(alert).not.toBeNull();
     expect(alert.textContent).toBe('Test Message');
   });
-}); // <- Add this closing brace
+}); 
 
 describe('calculateDuration', () => {
   it('should calculate the correct duration', () => {
